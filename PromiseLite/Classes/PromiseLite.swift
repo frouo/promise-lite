@@ -13,22 +13,26 @@ public class PromiseLite<Value> {
   }
 
   private var state: State = .pending
+  private var completion: ((Value) -> Void)?
 
   /// Creates a promise and executes the given executor.
   /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
-  public init(_ executor: (_ resolve: (Value) -> Void) -> Void) {
+  public init(_ executor: (_ resolve: @escaping (Value) -> Void) -> Void) {
     executor(resolve)
   }
 
   private func resolve(value: Value) {
     state = .fulfilled(value)
+    completion?(value)
   }
 
   /// Appends a fulfillment handler to the promise.
   /// - Parameter completion: A completion block that executes once the promise fulfilled.
-  public func then(_ completion: (Value) -> Void) {
+  public func then(_ completion: @escaping (Value) -> Void) {
     if case let State.fulfilled(value) = state {
       completion(value)
+    } else {
+      self.completion = completion
     }
   }
 }

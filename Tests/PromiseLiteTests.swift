@@ -3,6 +3,10 @@ import PromiseLite
 
 typealias Promise = PromiseLite
 
+private func async(after timeInterval: TimeInterval, execute: @escaping () -> Void) {
+  DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeInterval, execute: execute)
+}
+
 class PromiseLiteTests: XCTestCase {
   
   override func setUp() {
@@ -42,5 +46,28 @@ class PromiseLiteTests: XCTestCase {
 
     // then
     XCTAssertEqual(result, 5)
+  }
+
+  func test_completion_handler_is_called_when_executor_is_async() {
+    // given
+    let expectation = XCTestExpectation()
+    let executor: (@escaping (Int) -> Void) -> Void = { resolve in
+      async(after: 0.1) {
+        resolve(7)
+      }
+    }
+    var result = 0
+
+    // when
+    let promise = Promise<Int>(executor)
+
+    promise.then() { string in
+      result += string
+      expectation.fulfill()
+    }
+
+    // then
+    wait(for: [expectation], timeout: 1)
+    XCTAssertEqual(result, 7)
   }
 }
