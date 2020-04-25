@@ -1,0 +1,6 @@
+use_frameworks!
+target 'PromiseLite_Tests' do
+  pod 'PromiseLite', :path => '../'
+  
+  
+end
