@@ -7,20 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		D8AB45D7FCF75267824AF4D3 /* Pods_PromiseLite_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B373CAFCD226512952916C7 /* Pods_PromiseLite_Tests.framework */; };
+		F529E8712454B3CD0086E498 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F529E8702454B3CD0086E498 /* Tests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0788353096468C8560D9E127 /* Pods-PromiseLite_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PromiseLite_Tests.debug.xcconfig"; path = "Target Support Files/Pods-PromiseLite_Tests/Pods-PromiseLite_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		0E5E50A33B9CEBD337680077 /* PromiseLite.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = PromiseLite.podspec; path = ../PromiseLite.podspec; sourceTree = "<group>"; };
-		10504E37C21596BDEA00100E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		0E5E50A33B9CEBD337680077 /* PromiseLite.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = PromiseLite.podspec; path = ../PromiseLite.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		10504E37C21596BDEA00100E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		1B373CAFCD226512952916C7 /* Pods_PromiseLite_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PromiseLite_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2CF28599D47B94FCC8986280 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		2CF28599D47B94FCC8986280 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		607FACE51AFB9204008FA782 /* PromiseLite_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PromiseLite_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		AC1B486B8AAD843076167AA3 /* Pods-PromiseLite_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PromiseLite_Tests.release.xcconfig"; path = "Target Support Files/Pods-PromiseLite_Tests/Pods-PromiseLite_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		F529E8702454B3CD0086E498 /* Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,7 +41,6 @@
 				0788353096468C8560D9E127 /* Pods-PromiseLite_Tests.debug.xcconfig */,
 				AC1B486B8AAD843076167AA3 /* Pods-PromiseLite_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -67,7 +66,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				607FACEB1AFB9204008FA782 /* Tests.swift */,
+				F529E8702454B3CD0086E498 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -131,14 +130,9 @@
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
-					607FACCF1AFB9204008FA782 = {
-						CreatedOnToolsVersion = 6.3.1;
-						LastSwiftMigration = 0900;
-					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						LastSwiftMigration = 0900;
-						TestTargetID = 607FACCF1AFB9204008FA782;
+						LastSwiftMigration = 1130;
 					};
 				};
 			};
@@ -147,6 +141,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -218,7 +213,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
+				F529E8712454B3CD0086E498 /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +323,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0788353096468C8560D9E127 /* Pods-PromiseLite_Tests.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -340,9 +336,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PromiseLite_Example.app/PromiseLite_Example";
 			};
 			name = Debug;
 		};
@@ -350,6 +346,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AC1B486B8AAD843076167AA3 /* Pods-PromiseLite_Tests.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -360,7 +357,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PromiseLite_Example.app/PromiseLite_Example";
 			};
 			name = Release;
 		};

@@ -1,0 +1,18 @@
+PODS:
+  - PromiseLite (0.1.0)
+  - PromiseLite/Tests (0.1.0)
+
+DEPENDENCIES:
+  - PromiseLite (from `../`)
+  - PromiseLite/Tests (from `../`)
+
+EXTERNAL SOURCES:
+  PromiseLite:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  PromiseLite: 248496663cee9654a6fcf2b4d49db76e62241708
+
+PODFILE CHECKSUM: da6a8a3134ebb8b1cbd0834e728aa98f2dc83681
+
+COCOAPODS: 1.8.4
