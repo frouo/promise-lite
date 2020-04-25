@@ -20,9 +20,27 @@ class PromiseLiteTests: XCTestCase {
     var isExecutorCalled = false
 
     // when
-    _ = Promise { isExecutorCalled = true }
+    _ = Promise<Void> { _ in isExecutorCalled = true }
 
     // then
     XCTAssertTrue(isExecutorCalled)
+  }
+
+  func test_completion_handler_is_called_when_executor_is_sync() {
+    // given
+    let executor: ((Int) -> Void) -> Void = { resolve in
+      resolve(5)
+    }
+    var result = 0
+
+    // when
+    let promise = Promise<Int>(executor)
+
+    promise.then() { integer in
+      result += integer
+    }
+
+    // then
+    XCTAssertEqual(result, 5)
   }
 }
