@@ -121,4 +121,31 @@ class PromiseLiteTests: XCTestCase {
     XCTAssertEqual(result1, 3)
     XCTAssertEqual(result2, 3)
   }
+
+  func test_completion_handlers_can_be_chained() {
+    // given
+    let expectation = XCTestExpectation()
+    let promise = Promise<Int> { resolve in
+      async(after: 0.1) {
+        resolve(3)
+      }
+    }
+    var result = ""
+
+    // when
+    promise
+      .then { res in
+        return Promise<String> { resolve in
+          async(after: 0.1) {
+            resolve("foo \(res)")
+          }
+        }}
+      .then { res in
+        result += res
+        expectation.fulfill() }
+
+    // then
+    wait(for: [expectation], timeout: 1)
+    XCTAssertEqual(result, "foo 3")
+  }
 }

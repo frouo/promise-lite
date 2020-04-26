@@ -35,4 +35,15 @@ public class PromiseLite<Value> {
       completions.append(completion)
     }
   }
+
+  /// `flatMap`
+  /// - Parameter completion: A completion block that returns the next promise.
+  public func then<NewValue>(_ completion: @escaping (Value) -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
+    return PromiseLite<NewValue> { [weak self] resolveWith in
+      self?.then { value in
+        let promise = completion(value)
+        promise.then { newValue in resolveWith(newValue) }
+      }
+    }
+  }
 }
