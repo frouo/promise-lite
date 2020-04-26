@@ -46,4 +46,14 @@ public class PromiseLite<Value> {
       }
     }
   }
+
+  /// `map`
+  /// - Parameter completion: A completion block that returns the next promise value.
+  public func then<NewValue>(_ completion: @escaping (Value) -> NewValue) -> PromiseLite<NewValue> {
+    then { value -> PromiseLite<NewValue> in
+      return PromiseLite<NewValue> { resolveWith in
+        resolveWith(completion(value))
+      }
+    }
+  }
 }

@@ -148,4 +148,18 @@ class PromiseLiteTests: XCTestCase {
     wait(for: [expectation], timeout: 1)
     XCTAssertEqual(result, "foo 3")
   }
+
+  func test_completion_handler_can_return_value() {
+    // given
+    var result = ""
+
+    // when
+    Promise<Int> { resolve in resolve(3) }
+      .then { "goo \($0 + 5)" }
+      .then { "foo \($0)" }
+      .then { result += $0 }
+
+    // then
+    XCTAssertEqual(result, "foo goo 8")
+  }
 }
