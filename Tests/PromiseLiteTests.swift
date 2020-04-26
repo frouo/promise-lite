@@ -1,6 +1,8 @@
 import XCTest
 import PromiseLite
 
+typealias Promise = PromiseLite
+
 class PromiseLiteTests: XCTestCase {
   
   override func setUp() {
@@ -13,4 +15,14 @@ class PromiseLiteTests: XCTestCase {
     super.tearDown()
   }
 
+  func test_executor_is_called_during_promise_initialization() {
+    // given
+    var isExecutorCalled = false
+
+    // when
+    _ = Promise { isExecutorCalled = true }
+
+    // then
+    XCTAssertTrue(isExecutorCalled)
+  }
 }
