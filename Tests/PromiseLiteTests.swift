@@ -1,7 +1,7 @@
 import XCTest
 import PromiseLite
 
-typealias Promise = PromiseLite
+private typealias Promise = PromiseLite
 
 private func async(after timeInterval: TimeInterval, execute: @escaping () -> Void) {
   DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeInterval, execute: execute)
