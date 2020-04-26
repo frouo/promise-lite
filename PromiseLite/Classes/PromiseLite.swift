@@ -13,7 +13,7 @@ public class PromiseLite<Value> {
   }
 
   private var state: State = .pending
-  private var completion: ((Value) -> Void)?
+  private lazy var completions = [((Value) -> Void)]()
 
   /// Creates a promise and executes the given executor.
   /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
@@ -23,7 +23,7 @@ public class PromiseLite<Value> {
 
   private func resolve(value: Value) {
     state = .fulfilled(value)
-    completion?(value)
+    completions.forEach { $0(value) }
   }
 
   /// Appends a fulfillment handler to the promise.
@@ -32,7 +32,7 @@ public class PromiseLite<Value> {
     if case let State.fulfilled(value) = state {
       completion(value)
     } else {
-      self.completion = completion
+      completions.append(completion)
     }
   }
 }

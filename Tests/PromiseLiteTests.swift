@@ -92,4 +92,33 @@ class PromiseLiteTests: XCTestCase {
     XCTAssertEqual(result1, 3)
     XCTAssertEqual(result2, 3)
   }
+
+  func test_async_promise_supports_many_completion_handlers() {
+    // given
+    let expectation1 = XCTestExpectation()
+    let expectation2 = XCTestExpectation()
+    let promise = Promise<Int> { resolve in
+      async(after: 0.1) {
+        resolve(3)
+      }
+    }
+    var result1 = 0
+    var result2 = 0
+
+    // when
+    promise.then { result in
+      result1 += result
+      expectation1.fulfill()
+    }
+
+    promise.then { result in
+      result2 += result
+      expectation2.fulfill()
+    }
+
+    // then
+    wait(for: [expectation1, expectation2], timeout: 1)
+    XCTAssertEqual(result1, 3)
+    XCTAssertEqual(result2, 3)
+  }
 }
