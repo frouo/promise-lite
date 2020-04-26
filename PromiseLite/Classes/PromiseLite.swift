@@ -38,6 +38,7 @@ public class PromiseLite<Value> {
 
   /// `flatMap`
   /// - Parameter completion: A completion block that returns the next promise.
+  @discardableResult
   public func then<NewValue>(_ completion: @escaping (Value) -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
     return PromiseLite<NewValue> { [weak self] resolveWith in
       self?.then { value in
@@ -49,6 +50,7 @@ public class PromiseLite<Value> {
 
   /// `map`
   /// - Parameter completion: A completion block that returns the next promise value.
+  @discardableResult
   public func then<NewValue>(_ completion: @escaping (Value) -> NewValue) -> PromiseLite<NewValue> {
     then { value -> PromiseLite<NewValue> in
       return PromiseLite<NewValue> { resolveWith in
