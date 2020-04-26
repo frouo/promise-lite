@@ -11,7 +11,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  PromiseLite: 48b322eecdc209bfde7fbe01847f9c64a916ed97
+  PromiseLite: 1f0674baa548cdda244793273cc288a3c4243c21
 
 PODFILE CHECKSUM: da6a8a3134ebb8b1cbd0834e728aa98f2dc83681
 
