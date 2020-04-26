@@ -162,4 +162,45 @@ class PromiseLiteTests: XCTestCase {
     // then
     XCTAssertEqual(result, "foo goo 8")
   }
+
+  func test_chaining_mixing_async_and_sync() {
+    // given
+    let expectation = XCTestExpectation()
+    var result = ""
+    
+    let fetchThree: () -> Promise<Int> = {
+      Promise<Int> { resolve in
+        async(after: 0.1) { resolve(3) }
+      }
+    }
+
+    let addFiveAsyncTo: (Int) -> Promise<Int> = { integer in
+      Promise<Int> { resolve in
+        async(after: 0.1) { resolve(integer + 5) }
+      }
+    }
+
+    let prefixWithGoo: (String) -> Promise<String> = { string in Promise<String> { resolve in resolve("goo \(string)") }}
+
+    let fetchTadamEmoji: (String) -> Promise<String> = { _ in
+      Promise<String> { resolve in
+        async(after: 0.1) { resolve("🎉") }
+      }
+    }
+
+    // when
+    fetchThree() // resolves 3
+      .then { result in addFiveAsyncTo(result) } // resolves 3+5 = 8
+      .then { result in prefixWithGoo(String(result)) } // resolves "goo 8"
+      .then { result in "foo \(result)" } // resolves "foo goo 8"
+      .then { result in
+        fetchTadamEmoji(result).then { emoji in "\(result) \(emoji)"}} // resolves "foo goo 8 🎉"
+      .then { res in
+        result += res
+        expectation.fulfill() }
+
+    // then
+    wait(for: [expectation], timeout: 1)
+    XCTAssertEqual(result, "foo goo 8 🎉")
+  }
 }
