@@ -5,11 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/PromiseLite.svg?style=flat)](https://cocoapods.org/pods/PromiseLite)
 [![Platform](https://img.shields.io/cocoapods/p/PromiseLite.svg?style=flat)](https://cocoapods.org/pods/PromiseLite)
 
-## Example
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-## Requirements
+Lets chain asynchronous functions.
 
 ## Installation
 
@@ -19,9 +15,42 @@ PromiseLite is available through [CocoaPods](https://cocoapods.org). To install 
 pod 'PromiseLite'
 ```
 
+## Usage
+
+```swift
+fetchPodName()
+  .then { createMyTwitterMessage(podName: $0) }
+  .then { postOnTwitter(message: $0) }
+  .then { success in print("👍") }
+ 
+// MARK: Promises
+
+func fetchPodName() -> PromiseLite<String> {
+  PromiseLite<String> { resolve in
+    async(after: 0.1) {
+      resolve("PromiseLite") // 💎 retrieved pod name "PromiseLite" (async)
+    }
+  }
+}
+
+func createMyTwitterMessage(podName: String) -> String {
+  "\(podName) is out 🎉." // 📝 my twitter message (sync)
+}
+
+func postOnTwitter(message: String) -> PromiseLite<Bool> {
+  PromiseLite<Bool> { resolve in
+    async(after: 0.1) {
+      resolve(true) // 🐦 message posted on twitter (async)
+    }
+  }
+}
+```
+
 ## Author
 
 François Rouault, francois.rouault@cocoricostudio.com
+
+Feel free to submit merge request.
 
 ## License
 
