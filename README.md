@@ -17,38 +17,58 @@ pod 'PromiseLite'
 
 ## Usage
 
+### Chain promises
+
 ```swift
 fetchPodName()
-  .then { createMyTwitterMessage(podName: $0) }
-  .then { postOnTwitter(message: $0) }
-  .then { success in print("👍") }
- 
-// MARK: Promises
+  .map     { createMyTwitterMessage(podName: $0) }
+  .flatMap { postOnTwitter(message: $0) }
+  .map     { success in print("👍") }
+```
 
+#### Catch errors
+
+```swift
+fetchPodName()
+  .map     { createMyTwitterMessage(podName: $0) }
+  .flatMap { postOnTwitter(message: $0) }
+  .map    ({ _ in "👍" }, rejection: { _ in "👎" })
+  .map     { postSentStatus in print(postSentStatus) }
+```
+
+**Note:** error does propagate until it is catched in a `rejection` handler. Then the chain is restored and can continue.
+
+#### Create promises
+
+```swift
 func fetchPodName() -> PromiseLite<String> {
-  PromiseLite<String> { resolve in
+  PromiseLite<String> { resolve, reject in
     async(after: 0.1) {
-      resolve("PromiseLite") // 💎 retrieved pod name "PromiseLite" (async)
+      resolve("PromiseLite") // 💎 async retrieving pod name "PromiseLite" is a success, call `resolve`
+      // if anything goes wrong, call `reject`
     }
   }
-}
-
-func createMyTwitterMessage(podName: String) -> String {
-  "\(podName) is out 🎉." // 📝 my twitter message (sync)
 }
 
 func postOnTwitter(message: String) -> PromiseLite<Bool> {
-  PromiseLite<Bool> { resolve in
+  PromiseLite<Bool> { resolve, reject in
     async(after: 0.1) {
-      resolve(true) // 🐦 message posted on twitter (async)
+      resolve(true) // 🐦 async posting message on twitter is a success, call `resolve`
+      // if anything goes wrong, call `reject`
     }
   }
 }
+
+// Note that synchronous function can be chained to promise using `map`.
+
+func createMyTwitterMessage(podName: String) -> String {
+  "Lets chain async functions with \(podName)!" // 📝 my twitter message (sync)
+}
 ```
 
-## Author
+## Authors
 
-François Rouault, francois.rouault@cocoricostudio.com
+- François Rouault
 
 Feel free to submit merge request.
 

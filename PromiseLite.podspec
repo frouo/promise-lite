@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'PromiseLite'
-  s.version          = '0.1.0'
+  s.version          = '1.0.0'
   s.summary          = 'Lets chain asynchronous functions. Lightweight, 100% tested, no magic.'
 
   s.description      = <<-DESC
