@@ -8,10 +8,6 @@
 import XCTest
 import PromiseLite
 
-private func async(after timeInterval: TimeInterval, execute: @escaping () -> Void) {
-  DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeInterval, execute: execute)
-}
-
 class UsageExamples: XCTestCase {
   func test_example_with_thens() {
     let expectation = XCTestExpectation()
