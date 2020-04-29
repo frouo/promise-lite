@@ -134,7 +134,7 @@ class PromiseLiteTests: XCTestCase {
 
     // when
     promise
-      .then { res in
+      .flatMap { res in
         return Promise<String> { resolve, _ in
           async(after: 0.1) {
             resolve("foo \(res)")
@@ -190,10 +190,10 @@ class PromiseLiteTests: XCTestCase {
 
     // when
     fetchThree() // resolves 3
-      .then { result in addFiveAsyncTo(result) } // resolves 3+5 = 8
-      .then { result in prefixWithGoo(String(result)) } // resolves "goo 8"
+      .flatMap { result in addFiveAsyncTo(result) } // resolves 3+5 = 8
+      .flatMap { result in prefixWithGoo(String(result)) } // resolves "goo 8"
       .then { result in "foo \(result)" } // resolves "foo goo 8"
-      .then { result in
+      .flatMap { result in
         fetchTadamEmoji(result).then { emoji in "\(result) \(emoji)"}} // resolves "foo goo 8 🎉"
       .then { res in
         result += res

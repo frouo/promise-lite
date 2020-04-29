@@ -39,7 +39,7 @@ class UsageExamples: XCTestCase {
 
     fetchPodName()
       .then { createMyTwitterMessage(podName: $0) }
-      .then { postOnTwitter(message: $0) }
+      .flatMap { postOnTwitter(message: $0) }
       .then { success in
         isTweetPosted = success
         expectation.fulfill() }
