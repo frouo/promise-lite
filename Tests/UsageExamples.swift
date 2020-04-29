@@ -20,8 +20,8 @@ private func fetchPodName() -> PromiseLite<String> {
   }
 }
 
-private func createMyTwitterMessage(podName: String) -> String {
-  "Lets chain sync and async functions with \(podName)!" // 📝 my twitter message (sync)
+private func editTwitterMessage(podName: String) -> String {
+  "Lets chain sync and async functions with \(podName)!" // 📝 returns the twitter message (sync)
 }
 
 private func postOnTwitter(message: String) -> PromiseLite<Bool> {
@@ -39,7 +39,7 @@ class UsageExamples: XCTestCase {
     var isTweetPosted = false
 
     fetchPodName()
-      .map { createMyTwitterMessage(podName: $0) }
+      .map { editTwitterMessage(podName: $0) }
       .flatMap { postOnTwitter(message: $0) }
       .map { success in
         isTweetPosted = success
@@ -60,7 +60,7 @@ class UsageExamples: XCTestCase {
     }
 
     fetchPodName()
-      .map { createMyTwitterMessage(podName: $0) }
+      .map { editTwitterMessage(podName: $0) }
       .flatMap { postOnTwitter(message: $0) }
       .map({ _ in "👍" }, rejection: { _ in "👎" })
       .map { postSentStatus in

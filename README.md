@@ -21,24 +21,24 @@ pod 'PromiseLite'
 
 ```swift
 fetchPodName()
-  .map     { createMyTwitterMessage(podName: $0) }
+  .map     { editTwitterMessage(podName: $0) }
   .flatMap { postOnTwitter(message: $0) }
   .map     { success in print("👍") }
 ```
 
-#### Catch errors
+### Catch errors
 
 ```swift
 fetchPodName()
-  .map     { createMyTwitterMessage(podName: $0) }
+  .map     { editTwitterMessage(podName: $0) }
   .flatMap { postOnTwitter(message: $0) }
   .map    ({ _ in "👍" }, rejection: { _ in "👎" })
   .map     { postSentStatus in print(postSentStatus) }
 ```
 
-**Note:** error does propagate until it is catched in a `rejection` handler. Then the chain is restored and can continue.
+**Note:** error does propagate until it is catched in a `rejection` handler. Then the chain is restored and continues. In the above example, if `fetchPodName` calls __reject__, both `editTwitterMessage` and `postOnTwitter` __will not__ be called but `rejection: { _ in "👎" }` __will__, the chain is now restored, the next `map` completion is called and so on. 
 
-#### Create promises
+### Create promises
 
 ```swift
 func fetchPodName() -> PromiseLite<String> {
@@ -61,8 +61,8 @@ func postOnTwitter(message: String) -> PromiseLite<Bool> {
 
 // Note that synchronous function can be chained to promise using `map`.
 
-func createMyTwitterMessage(podName: String) -> String {
-  "Lets chain async functions with \(podName)!" // 📝 my twitter message (sync)
+func editTwitterMessage(podName: String) -> String {
+  "Lets chain async functions with \(podName)!" // 📝 returns the twitter message (sync)
 }
 ```
 
