@@ -49,10 +49,10 @@ public class PromiseLite<Value> {
     }
   }
 
-  /// `map`
-  /// - Parameter completion: A completion block that returns the next promise value.
+  /// Returns a promise.
+  /// - Parameter completion: A completion block that is called if the promise fulfilled.
   @discardableResult
-  public func then<NewValue>(_ completion: @escaping (Value) -> NewValue) -> PromiseLite<NewValue> {
+  public func map<NewValue>(_ completion: @escaping (Value) -> NewValue) -> PromiseLite<NewValue> {
     flatMap { value -> PromiseLite<NewValue> in
       return PromiseLite<NewValue> { resolveWith, _ in
         resolveWith(completion(value))

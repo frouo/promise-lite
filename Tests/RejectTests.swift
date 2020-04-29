@@ -32,7 +32,7 @@ class RejectTests: XCTestCase {
 
     // when
     let promise = Promise<String>(executor)
-    promise.then { _ in isThenCalled = true }
+    promise.map { _ in isThenCalled = true }
 
     // then
     XCTAssertFalse(isThenCalled)

@@ -40,7 +40,7 @@ class PromiseLiteTests: XCTestCase {
     // when
     let promise = Promise<Int>(executor)
 
-    promise.then() { integer in
+    promise.map() { integer in
       result += integer
     }
 
@@ -61,7 +61,7 @@ class PromiseLiteTests: XCTestCase {
     // when
     let promise = Promise<Int>(executor)
 
-    promise.then() { string in
+    promise.map() { string in
       result += string
       expectation.fulfill()
     }
@@ -80,11 +80,11 @@ class PromiseLiteTests: XCTestCase {
     var result2 = 0
 
     // when
-    promise.then { result in
+    promise.map { result in
       result1 += result
     }
 
-    promise.then { result in
+    promise.map { result in
       result2 += result
     }
 
@@ -106,12 +106,12 @@ class PromiseLiteTests: XCTestCase {
     var result2 = 0
 
     // when
-    promise.then { result in
+    promise.map { result in
       result1 += result
       expectation1.fulfill()
     }
 
-    promise.then { result in
+    promise.map { result in
       result2 += result
       expectation2.fulfill()
     }
@@ -140,7 +140,7 @@ class PromiseLiteTests: XCTestCase {
             resolve("foo \(res)")
           }
         }}
-      .then { res in
+      .map { res in
         result += res
         expectation.fulfill() }
 
@@ -155,9 +155,9 @@ class PromiseLiteTests: XCTestCase {
 
     // when
     Promise<Int> { resolve, _ in resolve(3) }
-      .then { "goo \($0 + 5)" }
-      .then { "foo \($0)" }
-      .then { result += $0 }
+      .map { "goo \($0 + 5)" }
+      .map { "foo \($0)" }
+      .map { result += $0 }
 
     // then
     XCTAssertEqual(result, "foo goo 8")
@@ -192,10 +192,10 @@ class PromiseLiteTests: XCTestCase {
     fetchThree() // resolves 3
       .flatMap { result in addFiveAsyncTo(result) } // resolves 3+5 = 8
       .flatMap { result in prefixWithGoo(String(result)) } // resolves "goo 8"
-      .then { result in "foo \(result)" } // resolves "foo goo 8"
+      .map { result in "foo \(result)" } // resolves "foo goo 8"
       .flatMap { result in
-        fetchTadamEmoji(result).then { emoji in "\(result) \(emoji)"}} // resolves "foo goo 8 🎉"
-      .then { res in
+        fetchTadamEmoji(result).map { emoji in "\(result) \(emoji)"}} // resolves "foo goo 8 🎉"
+      .map { res in
         result += res
         expectation.fulfill() }
 
