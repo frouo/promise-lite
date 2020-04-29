@@ -24,7 +24,7 @@ class PromiseLiteTests: XCTestCase {
     var isExecutorCalled = false
 
     // when
-    _ = Promise<Void> { _ in isExecutorCalled = true }
+    _ = Promise<Void> { _, _ in isExecutorCalled = true }
 
     // then
     XCTAssertTrue(isExecutorCalled)
@@ -32,7 +32,7 @@ class PromiseLiteTests: XCTestCase {
 
   func test_completion_handler_is_called_when_executor_is_sync() {
     // given
-    let executor: ((Int) -> Void) -> Void = { resolve in
+    let executor: ((Int) -> Void, (Error) -> Void) -> Void = { resolve, _ in
       resolve(5)
     }
     var result = 0
@@ -51,7 +51,7 @@ class PromiseLiteTests: XCTestCase {
   func test_completion_handler_is_called_when_executor_is_async() {
     // given
     let expectation = XCTestExpectation()
-    let executor: (@escaping (Int) -> Void) -> Void = { resolve in
+    let executor: (@escaping (Int) -> Void, (Error) -> Void) -> Void = { resolve, _ in
       async(after: 0.1) {
         resolve(7)
       }
@@ -73,7 +73,7 @@ class PromiseLiteTests: XCTestCase {
 
   func test_sync_promise_supports_many_completion_handlers() {
     // given
-    let promise = Promise<Int> { resolve in
+    let promise = Promise<Int> { resolve, _ in
       resolve(3)
     }
     var result1 = 0
@@ -97,7 +97,7 @@ class PromiseLiteTests: XCTestCase {
     // given
     let expectation1 = XCTestExpectation()
     let expectation2 = XCTestExpectation()
-    let promise = Promise<Int> { resolve in
+    let promise = Promise<Int> { resolve, _ in
       async(after: 0.1) {
         resolve(3)
       }
@@ -125,7 +125,7 @@ class PromiseLiteTests: XCTestCase {
   func test_completion_handlers_can_be_chained() {
     // given
     let expectation = XCTestExpectation()
-    let promise = Promise<Int> { resolve in
+    let promise = Promise<Int> { resolve, _ in
       async(after: 0.1) {
         resolve(3)
       }
@@ -135,7 +135,7 @@ class PromiseLiteTests: XCTestCase {
     // when
     promise
       .then { res in
-        return Promise<String> { resolve in
+        return Promise<String> { resolve, _ in
           async(after: 0.1) {
             resolve("foo \(res)")
           }
@@ -154,7 +154,7 @@ class PromiseLiteTests: XCTestCase {
     var result = ""
 
     // when
-    Promise<Int> { resolve in resolve(3) }
+    Promise<Int> { resolve, _ in resolve(3) }
       .then { "goo \($0 + 5)" }
       .then { "foo \($0)" }
       .then { result += $0 }
@@ -169,21 +169,21 @@ class PromiseLiteTests: XCTestCase {
     var result = ""
     
     let fetchThree: () -> Promise<Int> = {
-      Promise<Int> { resolve in
+      Promise<Int> { resolve, _ in
         async(after: 0.1) { resolve(3) }
       }
     }
 
     let addFiveAsyncTo: (Int) -> Promise<Int> = { integer in
-      Promise<Int> { resolve in
+      Promise<Int> { resolve, _ in
         async(after: 0.1) { resolve(integer + 5) }
       }
     }
 
-    let prefixWithGoo: (String) -> Promise<String> = { string in Promise<String> { resolve in resolve("goo \(string)") }}
+    let prefixWithGoo: (String) -> Promise<String> = { string in Promise<String> { resolve, _ in resolve("goo \(string)") }}
 
     let fetchTadamEmoji: (String) -> Promise<String> = { _ in
-      Promise<String> { resolve in
+      Promise<String> { resolve, _ in
         async(after: 0.1) { resolve("🎉") }
       }
     }

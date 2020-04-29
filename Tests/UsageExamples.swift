@@ -18,7 +18,7 @@ class UsageExamples: XCTestCase {
     var isTweetPosted = false
 
     func fetchPodName() -> PromiseLite<String> {
-      PromiseLite<String> { resolve in
+      PromiseLite<String> { resolve, _ in
         async(after: 0.1) {
           resolve("PromiseLite") // 💎 retrieved pod name "PromiseLite" (async)
         }
@@ -30,7 +30,7 @@ class UsageExamples: XCTestCase {
     }
 
     func postOnTwitter(message: String) -> PromiseLite<Bool> {
-      PromiseLite<Bool> { resolve in
+      PromiseLite<Bool> { resolve, _ in
         async(after: 0.1) {
           resolve(true) // 🐦 message posted on twitter (async)
         }

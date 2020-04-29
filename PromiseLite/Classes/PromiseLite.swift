@@ -17,13 +17,16 @@ public class PromiseLite<Value> {
 
   /// Creates a promise and executes the given executor.
   /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
-  public init(_ executor: (_ resolve: @escaping (Value) -> Void) -> Void) {
-    executor(resolve)
+  public init(_ executor: (_ resolve: @escaping (Value) -> Void, _ reject: (Error) -> Void) -> Void) {
+    executor(resolve, reject)
   }
 
   private func resolve(value: Value) {
     state = .fulfilled(value)
     completions.forEach { $0(value) }
+  }
+
+  private func reject(error: Error) {
   }
 
   /// Appends a fulfillment handler to the promise.
@@ -40,7 +43,7 @@ public class PromiseLite<Value> {
   /// - Parameter completion: A completion block that returns the next promise.
   @discardableResult
   public func then<NewValue>(_ completion: @escaping (Value) -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
-    return PromiseLite<NewValue> { [weak self] resolveWith in
+    return PromiseLite<NewValue> { [weak self] resolveWith, _ in
       self?.then { value in
         let promise = completion(value)
         promise.then { newValue in resolveWith(newValue) }
@@ -53,7 +56,7 @@ public class PromiseLite<Value> {
   @discardableResult
   public func then<NewValue>(_ completion: @escaping (Value) -> NewValue) -> PromiseLite<NewValue> {
     then { value -> PromiseLite<NewValue> in
-      return PromiseLite<NewValue> { resolveWith in
+      return PromiseLite<NewValue> { resolveWith, _ in
         resolveWith(completion(value))
       }
     }
