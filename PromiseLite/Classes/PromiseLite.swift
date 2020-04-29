@@ -14,7 +14,7 @@ public class PromiseLite<Value> {
   }
 
   private var state: State = .pending
-  private lazy var completions = [((Value) -> Void)]()
+  private lazy var completions = [((Value) -> Void, (Error) -> Void)]()
 
   /// Creates a promise and executes the given executor.
   /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
@@ -24,20 +24,21 @@ public class PromiseLite<Value> {
 
   private func resolve(value: Value) {
     state = .fulfilled(value)
-    completions.forEach { $0(value) }
+    completions.forEach { $0.0(value) }
   }
 
   private func reject(error: Error) {
     state = .rejected(error)
+    completions.forEach { $0.1(error) }
   }
 
-  private func then(completion: @escaping (Value) -> Void, rejection: (Error) -> Void) {
+  private func then(completion: @escaping (Value) -> Void, rejection: @escaping (Error) -> Void) {
     if case let State.fulfilled(value) = state {
       completion(value)
     } else if case let State.rejected(error) = state {
       rejection(error)
     } else {
-      completions.append(completion)
+      completions.append((completion, rejection))
     }
   }
 
@@ -53,7 +54,7 @@ public class PromiseLite<Value> {
   /// - Parameter completion: A completion block that is called if the promise fulfilled.
   /// - Parameter rejection: A completion block that is called if the promise rejected.
   @discardableResult
-  public func flatMap<NewValue>(_ completion: @escaping (Value) -> PromiseLite<NewValue>, rejection: (Error) -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
+  public func flatMap<NewValue>(_ completion: @escaping (Value) -> PromiseLite<NewValue>, rejection: @escaping (Error) -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
     return PromiseLite<NewValue> { [weak self] resolveWith, rejectWith in
       self?.then(
         completion: { value in
