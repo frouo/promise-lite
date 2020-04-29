@@ -29,9 +29,7 @@ public class PromiseLite<Value> {
   private func reject(error: Error) {
   }
 
-  /// Appends a fulfillment handler to the promise.
-  /// - Parameter completion: A completion block that executes once the promise fulfilled.
-  public func then(_ completion: @escaping (Value) -> Void) {
+  private func then(_ completion: @escaping (Value) -> Void) {
     if case let State.fulfilled(value) = state {
       completion(value)
     } else {
