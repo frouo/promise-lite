@@ -7,4 +7,5 @@
 
 enum FooError: Error {
   case 💥
+  case 🧨
 }
