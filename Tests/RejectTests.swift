@@ -23,18 +23,26 @@ class RejectTests: XCTestCase {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
 
-  func test_executor_can_call_reject() {
+  func test_rejection_handler_is_called_when_promise_rejects_sync() {
     // given
-    var isThenCalled = false
+    var isFlatMapCompletionCalled = false
+    var resultFlatMap: Error?
     let executor: (Resolve<String>, Reject) -> Void = { resolve, reject in
       reject(FooError.💥)
+    }
+    func foo() -> Promise<String> {
+      Promise<String> { resolve, _ in
+        resolve("foo")
+      }
     }
 
     // when
     let promise = Promise<String>(executor)
-    promise.map { _ in isThenCalled = true }
+    promise.flatMap({ _ -> Promise<String> in isFlatMapCompletionCalled = true; return foo() },
+                    rejection: { error in resultFlatMap = error; return foo() })
 
     // then
-    XCTAssertFalse(isThenCalled)
+    XCTAssertFalse(isFlatMapCompletionCalled)
+    XCTAssertEqual(resultFlatMap as? FooError, FooError.💥)
   }
 }

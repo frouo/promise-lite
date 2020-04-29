@@ -10,6 +10,7 @@ public class PromiseLite<Value> {
   private enum State {
     case pending
     case fulfilled(Value)
+    case rejected(Error)
   }
 
   private var state: State = .pending
@@ -17,7 +18,7 @@ public class PromiseLite<Value> {
 
   /// Creates a promise and executes the given executor.
   /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
-  public init(_ executor: (_ resolve: @escaping (Value) -> Void, _ reject: (Error) -> Void) -> Void) {
+  public init(_ executor: (_ resolve: @escaping (Value) -> Void, _ reject: @escaping (Error) -> Void) -> Void) {
     executor(resolve, reject)
   }
 
@@ -27,11 +28,14 @@ public class PromiseLite<Value> {
   }
 
   private func reject(error: Error) {
+    state = .rejected(error)
   }
 
-  private func then(_ completion: @escaping (Value) -> Void) {
+  private func then(completion: @escaping (Value) -> Void, rejection: (Error) -> Void) {
     if case let State.fulfilled(value) = state {
       completion(value)
+    } else if case let State.rejected(error) = state {
+      rejection(error)
     } else {
       completions.append(completion)
     }
@@ -41,11 +45,26 @@ public class PromiseLite<Value> {
   /// - Parameter completion: A completion block that is called if the promise fulfilled.
   @discardableResult
   public func flatMap<NewValue>(_ completion: @escaping (Value) -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
-    return PromiseLite<NewValue> { [weak self] resolveWith, _ in
-      self?.then { value in
-        let promise = completion(value)
-        promise.then { newValue in resolveWith(newValue) }
-      }
+    flatMap(completion,
+            rejection: { error in PromiseLite<NewValue> { _, rejectWith in rejectWith(error) }})
+  }
+
+  /// Returns a promise.
+  /// - Parameter completion: A completion block that is called if the promise fulfilled.
+  /// - Parameter rejection: A completion block that is called if the promise rejected.
+  @discardableResult
+  public func flatMap<NewValue>(_ completion: @escaping (Value) -> PromiseLite<NewValue>, rejection: (Error) -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
+    return PromiseLite<NewValue> { [weak self] resolveWith, rejectWith in
+      self?.then(
+        completion: { value in
+          let promise = completion(value)
+          promise.then(completion: { newValue in resolveWith(newValue) },
+                       rejection: { rejectWith($0) }) },
+        rejection: { error in
+          let promise = rejection(error)
+          promise.then(completion: { resolveWith($0) },
+                       rejection: { rejectWith($0) })
+      })
     }
   }
 

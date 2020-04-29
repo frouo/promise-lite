@@ -40,7 +40,7 @@ class PromiseLiteTests: XCTestCase {
     // when
     let promise = Promise<Int>(executor)
 
-    promise.map() { integer in
+    promise.map { integer in
       result += integer
     }
 
