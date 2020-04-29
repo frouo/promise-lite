@@ -27,6 +27,8 @@ class RejectTests: XCTestCase {
     // given
     var isFlatMapCompletionCalled = false
     var resultFlatMap: Error?
+    var isMapCompletionCalled = false
+    var resultMap: Error?
     let executor: (Resolve<String>, Reject) -> Void = { resolve, reject in
       reject(FooError.💥)
     }
@@ -41,8 +43,13 @@ class RejectTests: XCTestCase {
     promise.flatMap({ _ -> Promise<String> in isFlatMapCompletionCalled = true; return foo() },
                     rejection: { error in resultFlatMap = error; return foo() })
 
+    promise.map({ _ -> String in isMapCompletionCalled = true; return "foo"},
+                rejection: { error -> String in resultMap = error; return "foo" })
+
     // then
     XCTAssertFalse(isFlatMapCompletionCalled)
     XCTAssertEqual(resultFlatMap as? FooError, FooError.💥)
+    XCTAssertFalse(isMapCompletionCalled)
+    XCTAssertEqual(resultMap as? FooError, FooError.💥)
   }
 }
