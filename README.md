@@ -8,6 +8,8 @@
 
 Lets chain asynchronous functions.
 
+`PromiseLite` is an implementation of [Javascript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) in Swift. It is fully tested, pure Swift and lightweight (<150 lines of code).
+
 ## Installation
 
 PromiseLite is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your Podfile:
@@ -41,6 +43,8 @@ fetchPodName()
 
 ### Create promises
 
+A promise represents the eventual result of asynchronous operation.
+
 ```swift
 func fetchPodName() -> PromiseLite<String> {
   PromiseLite<String> { resolve, reject in
@@ -66,6 +70,8 @@ func editTwitterMessage(podName: String) -> String {
   "Lets chain async functions with \(podName)!" // 📝 returns the twitter message (sync)
 }
 ```
+
+**Note:** the first `resolve` or `reject` that is reached __wins__ and any further calls will be __ignored__.
 
 ## Authors
 
