@@ -23,6 +23,7 @@ public class PromiseLite<Value> {
   }
 
   private func resolve(value: Value) {
+    guard case .pending = state else { return }
     state = .fulfilled(value)
     completions.forEach { $0.0(value) }
   }
