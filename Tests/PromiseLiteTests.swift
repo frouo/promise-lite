@@ -62,6 +62,28 @@ class PromiseLiteTests: XCTestCase {
     XCTAssertEqual(result as? FooError, FooError.💥)
   }
 
+  func test_the_resolution_wins() {
+    // given
+    let promiseThatResolveFirst = Promise<String> { resolve, reject in
+      resolve("foo")
+      reject(FooError.💥)
+    }
+    let promiseThatRejectFirst = Promise<String> { resolve, reject in
+      reject(FooError.💥)
+      resolve("foo")
+    }
+    var promiseThatResolveResult: Any?
+    var promiseThatRejectResult: Any?
+
+    // when
+    promiseThatResolveFirst.map { str in promiseThatResolveResult = str }
+    promiseThatRejectFirst.map ({ _ in ()}, rejection: { error in promiseThatRejectResult = error })
+
+    // then
+    XCTAssertEqual(promiseThatResolveResult as? String, "foo")
+    XCTAssertEqual(promiseThatRejectResult as? FooError, FooError.💥)
+  }
+
   func test_completion_handler_is_called_when_executor_is_sync() {
     // given
     let executor: ((Int) -> Void, (Error) -> Void) -> Void = { resolve, _ in
