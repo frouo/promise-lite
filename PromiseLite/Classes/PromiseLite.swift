@@ -29,6 +29,7 @@ public class PromiseLite<Value> {
   }
 
   private func reject(error: Error) {
+    guard case .pending = state else { return }
     state = .rejected(error)
     completions.forEach { $0.1(error) }
   }
