@@ -73,8 +73,13 @@ public class PromiseLite<Value> {
           promise.then(completion: { newValue in resolveWith(newValue) },
                        rejection: { rejectWith($0) }) },
         rejection: { error in
-          let promise = try? rejection(error)
-          promise?.then(completion: { resolveWith($0) },
+          let promise: PromiseLite<NewValue>
+          do {
+            promise = try rejection(error)
+          } catch {
+            promise = PromiseLite<NewValue> { _, reject in reject(error) }
+          }
+          promise.then(completion: { resolveWith($0) },
                        rejection: { rejectWith($0) })
       })
     }
