@@ -28,11 +28,12 @@ class FinallyTests: XCTestCase {
     let executor: (Resolve<Int>, Reject) throws -> Void = { resolve, _ in
       resolve(3)
     }
+    let aPromise = Promise<String> { resolve, _ in resolve("foo") }
     var isCalled = false
 
     // when
     Promise<Int>(executor)
-      .finally { isCalled = true }
+      .finally { () -> Promise<String> in isCalled = true; return aPromise }
 
     // then
     XCTAssertTrue(isCalled)
@@ -43,13 +44,31 @@ class FinallyTests: XCTestCase {
     let executor: (Resolve<Int>, Reject) throws -> Void = { _, reject in
       reject(FooError.💥)
     }
+    let aPromise = Promise<String> { resolve, _ in resolve("foo") }
     var isCalled = false
 
     // when
     Promise<Int>(executor)
-      .finally { isCalled = true }
+      .finally { () -> Promise<String> in isCalled = true; return aPromise }
 
     // then
     XCTAssertTrue(isCalled)
+  }
+
+  func test_finally_can_be_chained() {
+    // given
+    let executor: (Resolve<Int>, Reject) throws -> Void = { resolve, _ in
+      resolve(3)
+    }
+    let aPromise = Promise<String> { resolve, _ in resolve("foo") }
+    var result: String?
+
+    // when
+    Promise<Int>(executor)
+      .finally { aPromise }
+      .map { string in result = string }
+
+    // then
+    XCTAssertEqual(result, "foo")
   }
 }
