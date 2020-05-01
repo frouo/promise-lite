@@ -39,4 +39,18 @@ class ThrowErrorTests: XCTestCase {
     XCTAssertFalse(completionIsCalled)
     XCTAssertEqual(result as? FooError, FooError.💥)
   }
+
+  func test_completion_handler_can_throw() {
+    // given
+    let executor: (Resolve<Int>, Reject) throws -> Void = { resolve, _ in
+      resolve(7)
+    }
+
+    // when
+    PromiseLite<Int>(executor)
+      .flatMap { _ -> Promise<Bool> in throw FooError.💥 }
+
+    // then
+    XCTAssert(true)
+  }
 }
