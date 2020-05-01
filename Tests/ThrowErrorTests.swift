@@ -23,16 +23,20 @@ class ThrowErrorTests: XCTestCase {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
 
-  func test_executor_can_throw() {
+  func test_rejection_handler_is_called_when_executor_throws() {
     // given
+    var result: Error?
+    var completionIsCalled = false
     let executor: (Resolve<Int>, Reject) throws -> Void = { _, _ in
       throw FooError.💥
     }
 
     // when
-    _ = PromiseLite<Int>(executor)
+    PromiseLite<Int>(executor)
+      .map({ _ in completionIsCalled = true }, rejection: { error in result = error })
 
     // then
-    XCTAssert(true)
+    XCTAssertFalse(completionIsCalled)
+    XCTAssertEqual(result as? FooError, FooError.💥)
   }
 }
