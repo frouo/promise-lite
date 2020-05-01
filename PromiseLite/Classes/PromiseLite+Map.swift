@@ -19,11 +19,11 @@ extension PromiseLite {
   /// - Parameter completion: A completion block that is called if the promise fulfilled.
   /// - Parameter rejection: A completion block that is called if the promise rejected.
   @discardableResult
-  public func map<NewValue>(_ completion: @escaping (Value) throws -> NewValue, rejection: @escaping (Error) -> NewValue) -> PromiseLite<NewValue> {
+  public func map<NewValue>(_ completion: @escaping (Value) throws -> NewValue, rejection: @escaping (Error) throws -> NewValue) -> PromiseLite<NewValue> {
     map(completion, rejection: Optional.some(rejection))
   }
 
-  private func map<NewValue>(_ completion: @escaping (Value) throws -> NewValue, rejection: ((Error) -> NewValue)?) -> PromiseLite<NewValue> {
+  private func map<NewValue>(_ completion: @escaping (Value) throws -> NewValue, rejection: ((Error) throws -> NewValue)?) -> PromiseLite<NewValue> {
     flatMap(
       { value -> PromiseLite<NewValue> in
         PromiseLite<NewValue> { (resolveWith, _) in
@@ -31,7 +31,7 @@ extension PromiseLite {
         }},
       rejection: { error -> PromiseLite<NewValue> in
         PromiseLite<NewValue> { resolveWith, rejectWith in
-          if let newValue = rejection?(error) {
+          if let newValue = try rejection?(error) {
             resolveWith(newValue)
           } else {
             rejectWith(error)
