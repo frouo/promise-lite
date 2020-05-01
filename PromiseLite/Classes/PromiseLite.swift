@@ -64,8 +64,13 @@ public class PromiseLite<Value> {
     return PromiseLite<NewValue> { [weak self] resolveWith, rejectWith in
       self?.then(
         completion: { value in
-          let promise = try? completion(value)
-          promise?.then(completion: { newValue in resolveWith(newValue) },
+          let promise: PromiseLite<NewValue>
+          do {
+            promise = try completion(value)
+          } catch {
+            promise = PromiseLite<NewValue> { _, reject in reject(error) }
+          }
+          promise.then(completion: { newValue in resolveWith(newValue) },
                        rejection: { rejectWith($0) }) },
         rejection: { error in
           let promise = rejection(error)
