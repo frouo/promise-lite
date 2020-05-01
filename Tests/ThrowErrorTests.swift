@@ -50,6 +50,9 @@ class ThrowErrorTests: XCTestCase {
     PromiseLite<Int>(executor)
       .flatMap { _ -> Promise<Bool> in throw FooError.💥 }
 
+    PromiseLite<Int>(executor)
+      .map { _ in throw FooError.💥 }
+
     // then
     XCTAssert(true)
   }
