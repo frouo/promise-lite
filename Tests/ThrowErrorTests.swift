@@ -40,7 +40,7 @@ class ThrowErrorTests: XCTestCase {
     XCTAssertEqual(result as? FooError, FooError.💥)
   }
 
-  func test_rejection_handler_is_called_when_completion_throws() {
+  func test_rejection_handler_is_called_when_flatMap_completion_throws() {
     // given
     var result: Error?
     var completionIsCalled = false
@@ -53,8 +53,23 @@ class ThrowErrorTests: XCTestCase {
       .flatMap { _ -> Promise<Bool> in throw FooError.💥 }
       .map({ _ in completionIsCalled = true }, rejection: { error in result = error })
 
+    // then
+    XCTAssertFalse(completionIsCalled)
+    XCTAssertEqual(result as? FooError, FooError.💥)
+  }
+
+  func test_rejection_handler_is_called_when_map_completion_throws() {
+    // given
+    var result: Error?
+    var completionIsCalled = false
+    let executor: (Resolve<Int>, Reject) throws -> Void = { resolve, _ in
+      resolve(7)
+    }
+
+    // when
     PromiseLite<Int>(executor)
       .map { _ in throw FooError.💥 }
+      .map({ _ in completionIsCalled = true }, rejection: { error in result = error })
 
     // then
     XCTAssertFalse(completionIsCalled)
