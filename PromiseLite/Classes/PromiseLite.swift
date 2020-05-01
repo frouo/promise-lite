@@ -18,8 +18,12 @@ public class PromiseLite<Value> {
 
   /// Creates a promise and executes the given executor.
   /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
-  public init(_ executor: (_ resolve: @escaping (Value) -> Void, _ reject: @escaping (Error) -> Void) -> Void) {
-    executor(resolve, reject)
+  public init(_ executor: (_ resolve: @escaping (Value) -> Void, _ reject: @escaping (Error) -> Void) throws -> Void) {
+    do {
+      try executor(resolve, reject)
+    } catch {
+      reject(error: error)
+    }
   }
 
   private func resolve(value: Value) {
