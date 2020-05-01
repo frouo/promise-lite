@@ -87,4 +87,40 @@ class FinallyTests: XCTestCase {
     // then
     XCTAssertEqual(result, "foo")
   }
+
+  func test_flatMap_finally_can_throw() {
+    // given
+    let executor: (Resolve<Int>, Reject) throws -> Void = { resolve, _ in
+      resolve(3)
+    }
+    var result: Error?
+    var string: String?
+
+    // when
+    Promise<Int>(executor)
+      .flatMap(finally: { () -> Promise<String> in throw FooError.💥 })
+      .map ({ str in string = str }, rejection: { error in result = error })
+
+    // then
+    XCTAssertNil(string)
+    XCTAssertEqual(result as? FooError, FooError.💥)
+  }
+
+  func test_map_finally_can_throw() {
+    // given
+    let executor: (Resolve<Int>, Reject) throws -> Void = { resolve, _ in
+      resolve(3)
+    }
+    var result: Error?
+    var string: String?
+
+    // when
+    Promise<Int>(executor)
+      .map(finally: { throw FooError.💥 })
+      .map ({ str in string = str }, rejection: { error in result = error })
+
+    // then
+    XCTAssertNil(string)
+    XCTAssertEqual(result as? FooError, FooError.💥)
+  }
 }
