@@ -33,7 +33,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .finally { () -> Promise<String> in isCalled = true; return aPromise }
+      .flatMap(finally: { () -> Promise<String> in isCalled = true; return aPromise })
 
     // then
     XCTAssertTrue(isCalled)
@@ -49,7 +49,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .finally { () -> Promise<String> in isCalled = true; return aPromise }
+      .flatMap(finally: { () -> Promise<String> in isCalled = true; return aPromise })
 
     // then
     XCTAssertTrue(isCalled)
@@ -65,7 +65,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .finally { aPromise }
+      .flatMap(finally: { aPromise })
       .map { string in result = string }
 
     // then
