@@ -55,7 +55,7 @@ class FinallyTests: XCTestCase {
     XCTAssertTrue(isCalled)
   }
 
-  func test_finally_can_be_chained() {
+  func test_flatMap_finally_can_be_chained() {
     // given
     let executor: (Resolve<Int>, Reject) throws -> Void = { resolve, _ in
       resolve(3)
@@ -66,6 +66,22 @@ class FinallyTests: XCTestCase {
     // when
     Promise<Int>(executor)
       .flatMap(finally: { aPromise })
+      .map { string in result = string }
+
+    // then
+    XCTAssertEqual(result, "foo")
+  }
+
+  func test_map_finally_can_be_chained() {
+    // given
+    let executor: (Resolve<Int>, Reject) throws -> Void = { resolve, _ in
+      resolve(3)
+    }
+    var result: String?
+
+    // when
+    Promise<Int>(executor)
+      .map(finally: { "foo" })
       .map { string in result = string }
 
     // then
