@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.2.0](https://github.com/frouo/promise-lite/releases/tag/1.2.0)
+
+* Add support to `throw` error within Promise, `map` and `flapMap` functions.
+* Add `finally` handler to a promise. The handler is called when the promise is settled, whether fulfilled or rejected.
+
 ## [1.1.0](https://github.com/frouo/promise-lite/releases/tag/1.1.0)
 
 * Fix: the first `resolve` or `reject` that is reached wins and any further calls will be ignored.
