@@ -8,7 +8,9 @@
 
 Lets chain asynchronous functions.
 
-`PromiseLite` is an implementation of [Javascript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) in Swift. It is fully tested, pure Swift and lightweight (<150 lines of code).
+`PromiseLite` is an implementation of [Javascript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) in Swift. 
+
+It is pure Swift, 100% tested, and very lightweight (~100 lines of code) #greentech 🌱
 
 ## Installation
 
@@ -24,22 +26,47 @@ pod 'PromiseLite'
 
 ```swift
 fetchPodName()
-  .map     { editTwitterMessage(podName: $0) }
-  .flatMap { postOnTwitter(message: $0) }
-  .map     { success in print("👍") }
+  .map          { editTwitterMessage(podName: $0) }
+  .flatMap      { postOnTwitter(message: $0) }
+  .map          { isSuccess in isSuccess ? "👍" : "👎" }
+  .map          { thumbs in label.text = thumbs }
+  .map(finally: { isLoading = false }
 ```
 
-### Catch errors
+### Throw error
+
+Both `map` and `flapMap` support throwing error.
+
+```swift
+fetchPodName()
+  .map { editTwitterMessage(podName: $0) }
+  .map { /* ... */ throw AppError.somethingWentWrong }
+  .map { /* not reached */ }
+  .map { /* not reached */ }
+  ...
+```
+
+### Catch error
 
 ```swift
 fetchPodName()
   .map     { editTwitterMessage(podName: $0) }
-  .flatMap { postOnTwitter(message: $0) }
-  .map    ({ _ in "👍" }, rejection: { _ in "👎" })
-  .map     { postSentStatus in print(postSentStatus) }
+  .map     { /* ... */ throw AppError.somethingWentWrong }
+  .map     { /* not reached */ }
+  .map     { /* not reached */ }
+  .map    ({ _ in "👍" /*not reached*/}, rejection: { _ in "👎" /*reached!*/})
+  .map     { /* reached! */ }
+  ...
 ```
 
-**Note:** error does propagate until it is catched in a `rejection` handler. Then the chain is restored and continues. In the above example, if `fetchPodName` calls __reject__, both `editTwitterMessage` and `postOnTwitter` __will not__ be called but `rejection: { _ in "👎" }` __will__, the chain is now restored, the next `map` completion is called and so on. 
+Error does propagate until it is catched by a `rejection` handler, then the chain is restored and continues.
+
+In other words:
+* a `completion` block is reached if __all__ of the above promises __resolve__
+* a `rejection` block is reached if __one__ of the promises above __rejects__ or __throws__
+* once the error is catched (`rejection` block), the chain is restored
+
+In other other words, considering the above example, if `fetchPodName` calls __reject__ or __throw__, the followinig `editTwitterMessage`, `postOnTwitter` and `{ _ in "👍" }` completions __are not__ be reached whereas `rejection: { _ in "👎" }` __is__. Because the error in `fetchPodName` is now intercepted, the chain is restored and can continue to the next `map` completion block and so on.
 
 ### Create promises
 
@@ -49,8 +76,8 @@ A promise represents the eventual result of asynchronous operation.
 func fetchPodName() -> PromiseLite<String> {
   PromiseLite<String> { resolve, reject in
     async(after: 0.1) {
-      resolve("PromiseLite") // 💎 async retrieving pod name "PromiseLite" is a success, call `resolve`
-      // if anything goes wrong, call `reject`
+      resolve("PromiseLite") // ✅ async retrieving pod name "PromiseLite" is a success, call `resolve`
+      // if anything goes wrong, call `reject` or `throw`
     }
   }
 }
@@ -58,8 +85,8 @@ func fetchPodName() -> PromiseLite<String> {
 func postOnTwitter(message: String) -> PromiseLite<Bool> {
   PromiseLite<Bool> { resolve, reject in
     async(after: 0.1) {
-      resolve(true) // 🐦 async posting message on twitter is a success, call `resolve`
-      // if anything goes wrong, call `reject`
+      reject(AppError.invalidToken) // ❌ async posting message on twitter fails, call `reject` or `throw`
+      // if it is a success, call `resolve`
     }
   }
 }
@@ -67,11 +94,13 @@ func postOnTwitter(message: String) -> PromiseLite<Bool> {
 // Note that synchronous function can be chained to promise using `map`.
 
 func editTwitterMessage(podName: String) -> String {
-  "Lets chain async functions with \(podName)!" // 📝 returns the twitter message (sync)
+  "Lets chain async functions with \(podName)!" // ✅ sync returning the twitter message
 }
 ```
 
-**Note:** the first `resolve` or `reject` that is reached __wins__ and any further calls will be __ignored__.
+**Note:**
+* a Promise can `throw`. It is equivalent to calling `do { try myFunctionThatThrows() } catch { reject(error) }`.
+* the first `resolve`, `reject` or `throw` that is reached __wins__ and any further calls will be __ignored__.  
 
 ## Authors
 
