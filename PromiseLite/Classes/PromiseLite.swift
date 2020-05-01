@@ -38,7 +38,7 @@ public class PromiseLite<Value> {
     completions.forEach { $0.1(error) }
   }
 
-  private func then(completion: @escaping (Value) -> Void, rejection: @escaping (Error) -> Void) {
+  internal func then(completion: @escaping (Value) -> Void, rejection: @escaping (Error) -> Void) {
     if case let State.fulfilled(value) = state {
       completion(value)
     } else if case let State.rejected(error) = state {
