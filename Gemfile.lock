@@ -87,8 +87,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  cocoapods (= 1.9.1)
-  xcpretty (= 0.3.0)
+  cocoapods
+  xcpretty
 
 BUNDLED WITH
    2.1.4
