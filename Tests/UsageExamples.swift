@@ -12,44 +12,47 @@ private enum AppError: Error {
   case invalidToken
 }
 
-private func fetchPodName() -> PromiseLite<String> {
-  PromiseLite<String> { resolve, _ in
+func fetchPodName() -> PromiseLite<String> {
+  PromiseLite<String> { resolve, reject in
     async(after: 0.1) {
-      resolve("PromiseLite") // 💎 retrieved pod name "PromiseLite" (async)
+      resolve("PromiseLite")
     }
   }
 }
 
-private func editTwitterMessage(podName: String) -> String {
-  "Lets chain sync and async functions with \(podName)!" // 📝 returns the twitter message (sync)
-}
+// Note that synchronous function can be chained to promise using `map`.
 
-private func postOnTwitter(message: String) -> PromiseLite<Bool> {
-  PromiseLite<Bool> { resolve, _ in
-    async(after: 0.1) {
-      resolve(true) // 🐦 message posted on twitter (async)
-      // reject(AppError.invalidToken) // if anything went wrong, call `reject`.
-    }
-  }
+func editTwitterMessage(podName: String) -> String {
+  "Lets chain async functions with \(podName)!" // ✅ sync returning the twitter message
 }
 
 class UsageExamples: XCTestCase {
   func test_example_1() {
+    // given
     let expectation = XCTestExpectation()
     var isTweetPosted = false
+    func postOnTwitter(message: String) -> PromiseLite<Bool> {
+      PromiseLite<Bool> { resolve, reject in
+        async(after: 0.1) {
+          resolve(true)
+        }
+      }
+    }
 
+    // when
     fetchPodName()
       .map { editTwitterMessage(podName: $0) }
       .flatMap { postOnTwitter(message: $0) }
-      .map { success in
-        isTweetPosted = success
-        expectation.fulfill() }
+      .map { isTweetPosted = $0 }
+      .map(finally: { expectation.fulfill() })
 
+    // then
     wait(for: [expectation], timeout: 1)
     XCTAssertTrue(isTweetPosted)
   }
 
   func test_example_2() {
+    // given
     let expectation = XCTestExpectation()
     var result: String?
 
@@ -59,14 +62,15 @@ class UsageExamples: XCTestCase {
       }
     }
 
+    // when
     fetchPodName()
       .map { editTwitterMessage(podName: $0) }
       .flatMap { postOnTwitter(message: $0) }
       .map({ _ in "👍" }, rejection: { _ in "👎" })
-      .map { postSentStatus in
-        result = postSentStatus
-        expectation.fulfill() }
+      .map { result = $0 }
+      .map(finally: { expectation.fulfill() })
 
+    // then
     wait(for: [expectation], timeout: 1)
     XCTAssertEqual(result, "👎")
   }
