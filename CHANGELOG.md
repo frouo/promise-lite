@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.2.1](https://github.com/frouo/promise-lite/releases/tag/1.2.1)
+
+* Add support for iOS 9, tvOS 9, OS X 10.9, watchOS 2.
+
 ## [1.2.0](https://github.com/frouo/promise-lite/releases/tag/1.2.0)
 
 * Add support to `throw` error within Promise, `map` and `flapMap` functions.
