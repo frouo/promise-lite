@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D8AB45D7FCF75267824AF4D3 /* Pods_PromiseLite_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B373CAFCD226512952916C7 /* Pods_PromiseLite_Tests.framework */; };
-		F529E8712454B3CD0086E498 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F529E8702454B3CD0086E498 /* Tests.swift */; };
+		F529E8712454B3CD0086E498 /* EmptyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F529E8702454B3CD0086E498 /* EmptyTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,7 +21,7 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC1B486B8AAD843076167AA3 /* Pods-PromiseLite_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PromiseLite_Tests.release.xcconfig"; path = "Target Support Files/Pods-PromiseLite_Tests/Pods-PromiseLite_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		F52908AC245B2E5E006DE06F /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../CHANGELOG.md; sourceTree = "<group>"; };
-		F529E8702454B3CD0086E498 /* Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
+		F529E8702454B3CD0086E498 /* EmptyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,7 +67,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				F529E8702454B3CD0086E498 /* Tests.swift */,
+				F529E8702454B3CD0086E498 /* EmptyTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -215,7 +215,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F529E8712454B3CD0086E498 /* Tests.swift in Sources */,
+				F529E8712454B3CD0086E498 /* EmptyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

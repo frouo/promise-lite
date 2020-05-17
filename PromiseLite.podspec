@@ -30,6 +30,6 @@ It is pure Swift, 100% tested, and very lightweight (~100 lines of code) #greent
     test_spec.ios.deployment_target = deployment_target_ios
     test_spec.osx.deployment_target = deployment_target_osx
     test_spec.tvos.deployment_target = deployment_target_tvos
-    test_spec.source_files = 'Tests/**/*.{swift}'
+    test_spec.source_files = 'PromiseLite/Tests/**/*.{swift}'
   end
 end
