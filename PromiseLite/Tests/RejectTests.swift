@@ -40,11 +40,13 @@ class RejectTests: XCTestCase {
 
     // when
     let promise = Promise<String>(executor)
-    promise.flatMap({ _ -> Promise<String> in isFlatMapCompletionCalled = true; return foo() },
-                    rejection: { error in resultFlatMap = error; return foo() })
+    promise
+      .flatMap { _ -> Promise<String> in isFlatMapCompletionCalled = true; return foo() }
+      .flatCatch { error in resultFlatMap = error; return foo() }
 
-    promise.map({ _ -> String in isMapCompletionCalled = true; return "foo"},
-                rejection: { error -> String in resultMap = error; return "foo" })
+    promise
+      .map { _ -> String in isMapCompletionCalled = true; return "foo"}
+      .catch { error -> String in resultMap = error; return "foo" }
 
     // then
     XCTAssertFalse(isFlatMapCompletionCalled)
@@ -74,11 +76,13 @@ class RejectTests: XCTestCase {
 
     // when
     let promise = Promise<String>(executor)
-    promise.flatMap({ _ -> Promise<String> in isFlatMapCompletionCalled = true; return foo() },
-                    rejection: { error in resultFlatMap = error; expectationFlatMap.fulfill(); return foo() })
+    promise
+      .flatMap { _ -> Promise<String> in isFlatMapCompletionCalled = true; return foo() }
+      .flatCatch { error in resultFlatMap = error; expectationFlatMap.fulfill(); return foo() }
 
-    promise.map({ _ -> String in isMapCompletionCalled = true; return "foo"},
-                rejection: { error -> String in resultMap = error; expectationMap.fulfill(); return "foo" })
+    promise
+      .map { _ -> String in isMapCompletionCalled = true; return "foo"}
+      .catch { error -> String in resultMap = error; expectationMap.fulfill(); return "foo" }
 
     // then
     wait(for: [expectationMap, expectationFlatMap], timeout: 1)
@@ -107,7 +111,8 @@ class RejectTests: XCTestCase {
       .map { str -> String in isCalled2 = true; return "\(str) 2" }
       .flatMap { _ -> PromiseLite<String> in isCalled3 = true; return rejectFoo() }
       .map { str -> String in isCalled4 = true; return "\(str) 4" }
-      .map({ str -> String in isCalled5 = true; return "\(str) 5" }, rejection: { error in errorCaptured = error; return "👌" })
+      .map { str -> String in isCalled5 = true; return "\(str) 5" }
+      .catch { error in errorCaptured = error; return "👌" }
       .map { str in result = str }
 
     // then

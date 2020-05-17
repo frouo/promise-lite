@@ -56,7 +56,9 @@ class PromiseLiteTests: XCTestCase {
     var result: Error?
 
     // when
-    promise.map ({ _ in ()}, rejection: { error in result = error })
+    promise
+      .map { _ in () }
+      .catch { error in result = error }
 
     // then
     XCTAssertEqual(result as? FooError, FooError.💥)
@@ -77,7 +79,7 @@ class PromiseLiteTests: XCTestCase {
 
     // when
     promiseThatResolveFirst.map { str in promiseThatResolveResult = str }
-    promiseThatRejectFirst.map ({ _ in ()}, rejection: { error in promiseThatRejectResult = error })
+    promiseThatRejectFirst.map { _ in () }.catch { error in promiseThatRejectResult = error }
 
     // then
     XCTAssertEqual(promiseThatResolveResult as? String, "foo")

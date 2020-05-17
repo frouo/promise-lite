@@ -66,7 +66,8 @@ class UsageExamples: XCTestCase {
     fetchPodName()
       .map { editTwitterMessage(podName: $0) }
       .flatMap { postOnTwitter(message: $0) }
-      .map({ _ in "👍" }, rejection: { _ in "👎" })
+      .map { _ in "👍" }
+      .catch { _ in "👎" }
       .map { result = $0 }
       .finally { expectation.fulfill() }
 

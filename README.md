@@ -35,7 +35,7 @@ fetchPodName()
 
 ### Throw error
 
-Both `map` and `flapMap` support throwing error.
+All chaining functions support error throwing.
 
 ```swift
 fetchPodName()
@@ -48,29 +48,31 @@ fetchPodName()
 
 ### Catch error
 
+Use `catch` to deal with rejected cases. Once dealt with, the chaining continues.
+
 ```swift
 fetchPodName()
-  .map { editTwitterMessage(podName: $0) }
-  .map { /* ... */ throw AppError.somethingWentWrong }
-  .map { /* not reached */ }
-  .map { /* not reached */ }
-  .map({ _ in "👍" /*not reached*/}, rejection: { _ in "👎" /*reached!*/})
-  .map { /* reached! */ }
+  .map   { editTwitterMessage(podName: $0) }
+  .map   { /* not reached */ }
+  .map   { /* not reached */ }
+  .map   { /* not reached */ }
+  .catch { err in "👎" /*reached!*/}
+  .map   { /* reached! */ }
   ...
 ```
 
-Error does propagate until it is catched by a `rejection` handler, then the chain is restored and continues.
+Error does propagate until it is catched using `catch`, then the chain is restored and continues.
 
 In other words:
-* a `completion` block is reached if __all__ of the above promises __resolve__
-* a `rejection` block is reached if __one__ of the promises above __rejects__ or __throws__
-* once the error is catched (`rejection` block), the chain is restored
+* a `map` /  `flatMap` completion block is reached if __all__ of the above promises __resolve__
+* a `catch` completion block is reached if __one__ of the promises above __rejects__ or __throws__
+* once the error is catched, the chain is restored
 
-In other other words, considering the above example, if `fetchPodName` calls __reject__ or __throw__, the followinig `editTwitterMessage`, `postOnTwitter` and `{ _ in "👍" }` completions __are not__ be reached whereas `rejection: { _ in "👎" }` __is__. Because the error in `fetchPodName` is now intercepted, the chain is restored and can continue to the next `map` completion block and so on.
+In other other words, considering the above example, lets say that `fetchPodName` calls __reject__ or __throw__, the following `map` completion blocks __are not__ called but the first `catch` completion block (ie. `{ _ in "👎" }`) __is__. Because the error in `fetchPodName` is now intercepted, the chain is restored and can continue to the next `map` completion block and so on.
 
 ### Create promises
 
-A promise represents the eventual result of asynchronous operation.
+A promise represents the eventual result of asynchronous operation. Even synchronous indeed.
 
 ```swift
 func fetchPodName() -> PromiseLite<String> {
@@ -96,6 +98,11 @@ func postOnTwitter(message: String) -> PromiseLite<Bool> {
 func editTwitterMessage(podName: String) -> String {
   "Lets chain async functions with \(podName)!" // ✅ sync returning the twitter message
 }
+
+// Some helpers
+
+let aPromiseThatResolves = Promise.resolve("foo")
+let aPromiseThatRejects = Promise<String>.reject(FooError.💥)
 ```
 
 **Note:**

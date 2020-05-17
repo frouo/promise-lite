@@ -15,9 +15,10 @@ extension PromiseLite {
     map(completion, rejection: nil)
   }
 
-  /// Returns a promise.
+  /// Use `map(_:)` and `catch(_:)` instead.
   /// - Parameter completion: A completion block that is called if the promise fulfilled.
   /// - Parameter rejection: A completion block that is called if the promise rejected.
+  @available(*, deprecated, message: "Use `catch` instead to deal with rejected cases")
   @discardableResult
   public func map<NewValue>(_ completion: @escaping (Value) throws -> NewValue, rejection: @escaping (Error) throws -> NewValue) -> PromiseLite<NewValue> {
     map(completion, rejection: Optional.some(rejection))
@@ -25,7 +26,7 @@ extension PromiseLite {
 
   private func map<NewValue>(_ completion: @escaping (Value) throws -> NewValue, rejection: ((Error) throws -> NewValue)?) -> PromiseLite<NewValue> {
     flatMap(
-      { value -> PromiseLite<NewValue> in
+      completion: { value -> PromiseLite<NewValue> in
         PromiseLite<NewValue> { (resolveWith, _) in
           resolveWith(try completion(value))
         }},

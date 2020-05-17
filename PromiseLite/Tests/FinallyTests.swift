@@ -99,7 +99,8 @@ class FinallyTests: XCTestCase {
     // when
     Promise<Int>(executor)
       .flatFinally { () -> Promise<String> in throw FooError.💥 }
-      .map ({ str in string = str }, rejection: { error in result = error })
+      .map { str in string = str }
+      .catch  { error in result = error }
 
     // then
     XCTAssertNil(string)
@@ -117,7 +118,8 @@ class FinallyTests: XCTestCase {
     // when
     Promise<Int>(executor)
       .finally { throw FooError.💥 }
-      .map ({ str in string = str }, rejection: { error in result = error })
+      .map { str in string = str }
+      .catch { error in result = error }
 
     // then
     XCTAssertNil(string)

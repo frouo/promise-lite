@@ -33,7 +33,8 @@ class ThrowErrorTests: XCTestCase {
 
     // when
     PromiseLite<Int>(executor)
-      .map({ _ in completionIsCalled = true }, rejection: { error in result = error })
+      .map { _ in completionIsCalled = true }
+      .catch { error in result = error }
 
     // then
     XCTAssertFalse(completionIsCalled)
@@ -51,7 +52,8 @@ class ThrowErrorTests: XCTestCase {
     // when
     PromiseLite<Int>(executor)
       .flatMap { _ -> Promise<Bool> in throw FooError.💥 }
-      .map({ _ in completionIsCalled = true }, rejection: { error in result = error })
+      .map { _ in completionIsCalled = true }
+      .catch { error in result = error }
 
     // then
     XCTAssertFalse(completionIsCalled)
@@ -69,7 +71,8 @@ class ThrowErrorTests: XCTestCase {
     // when
     PromiseLite<Int>(executor)
       .map { _ in throw FooError.💥 }
-      .map({ _ in completionIsCalled = true }, rejection: { error in result = error })
+      .map { _ in completionIsCalled = true }
+      .catch { error in result = error }
 
     // then
     XCTAssertFalse(completionIsCalled)
@@ -87,16 +90,14 @@ class ThrowErrorTests: XCTestCase {
 
     // when
     PromiseLite<Int>(executor)
-      .flatMap(
-        { _ -> Promise<Int> in aPromise },
-        rejection: { _  -> Promise<Int> in throw FooError.🧨 })
-      .flatMap(
-        { _ -> Promise<Int> in
+      .flatMap { _ -> Promise<Int> in aPromise }
+      .flatCatch { _ -> Promise<Int> in throw FooError.🧨 }
+      .flatMap { _ -> Promise<Int> in
           completionIsCalled = true
-          return aPromise },
-        rejection: { error -> Promise<Int> in
+          return aPromise }
+      .flatCatch { error -> Promise<Int> in
           result = error
-          return aPromise })
+          return aPromise }
 
     // then
     XCTAssertFalse(completionIsCalled)
@@ -113,8 +114,10 @@ class ThrowErrorTests: XCTestCase {
 
     // when
     PromiseLite<Int>(executor)
-      .map({ _ in }, rejection: { _ in throw FooError.🧨 })
-      .map({ _ in completionIsCalled = true }, rejection: { error in result = error })
+      .map { _ in }
+      .catch { _ in throw FooError.🧨 }
+      .map { _ in completionIsCalled = true }
+      .catch { error in result = error }
 
     // then
     XCTAssertFalse(completionIsCalled)

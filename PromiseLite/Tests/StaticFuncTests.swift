@@ -27,7 +27,8 @@ class StaticFuncTests: XCTestCase {
 
     // when
     Promise.resolve(3)
-      .map({ result = $0 }, rejection: { _ in XCTFail("Static func 'resolve' must resolve") })
+      .map { result = $0 }
+      .catch { _ in XCTFail("Static func 'resolve' must resolve") }
 
     // then
     XCTAssertEqual(result, 3)
@@ -39,7 +40,8 @@ class StaticFuncTests: XCTestCase {
 
     // when
     Promise<Int>.reject(FooError.💥)
-      .map({ _ in XCTFail("Static func 'reject' must reject") }, rejection: { error in result = error })
+      .map { _ in XCTFail("Static func 'reject' must reject") }
+      .catch { error in result = error }
 
     // then
     XCTAssertEqual(result as? FooError, FooError.💥)

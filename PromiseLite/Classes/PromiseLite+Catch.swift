@@ -12,7 +12,7 @@ extension PromiseLite {
   /// - Parameter rejection: A completion block that is called when the Promise is rejected.
   @discardableResult
   public func flatCatch(_ rejection: @escaping (Error) throws -> PromiseLite) -> PromiseLite {
-    flatMap({ value in PromiseLite.resolve(value) },
+    flatMap(completion: { value in PromiseLite.resolve(value) },
             rejection: rejection)
   }
 
@@ -22,7 +22,7 @@ extension PromiseLite {
   /// - Parameter rejection: A completion block that is called when the Promise is rejected.
   @discardableResult
   public func `catch`(_ rejection: @escaping (Error) throws -> Value) -> PromiseLite {
-    flatMap({ value in PromiseLite.resolve(value) },
+    flatMap(completion: { value in PromiseLite.resolve(value) },
             rejection: { PromiseLite.resolve(try rejection($0)) })
   }
 }
