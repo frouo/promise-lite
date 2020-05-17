@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.4.0](https://github.com/frouo/promise-lite/releases/tag/1.4.0)
+
+* Deal with rejected cases using `catch` or `flatCatch` functions
+* `map(_:, rejection:)` and `flatMap(_:, rejection:)` are deprecated
+* Deal with settled cases, i.e either fulfilled or rejected, using `finally` or `flatFinally` functions
+* `map(finally:)` and `flatMap(finally:)` are deprecated
+
 ## [1.3.0](https://github.com/frouo/promise-lite/releases/tag/1.3.0)
 
 * Provide `resolve` and `reject` static helper functions
