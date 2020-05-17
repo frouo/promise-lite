@@ -33,7 +33,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .flatMap(finally: { () -> Promise<String> in isCalled = true; return aPromise })
+      .flatFinally { () -> Promise<String> in isCalled = true; return aPromise }
 
     // then
     XCTAssertTrue(isCalled)
@@ -49,7 +49,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .flatMap(finally: { () -> Promise<String> in isCalled = true; return aPromise })
+      .flatFinally { () -> Promise<String> in isCalled = true; return aPromise }
 
     // then
     XCTAssertTrue(isCalled)
@@ -65,7 +65,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .flatMap(finally: { aPromise })
+      .flatFinally { aPromise }
       .map { string in result = string }
 
     // then
@@ -81,7 +81,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .map(finally: { "foo" })
+      .finally { "foo" }
       .map { string in result = string }
 
     // then
@@ -98,7 +98,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .flatMap(finally: { () -> Promise<String> in throw FooError.💥 })
+      .flatFinally { () -> Promise<String> in throw FooError.💥 }
       .map ({ str in string = str }, rejection: { error in result = error })
 
     // then
@@ -116,7 +116,7 @@ class FinallyTests: XCTestCase {
 
     // when
     Promise<Int>(executor)
-      .map(finally: { throw FooError.💥 })
+      .finally { throw FooError.💥 }
       .map ({ str in string = str }, rejection: { error in result = error })
 
     // then

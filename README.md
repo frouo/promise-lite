@@ -26,11 +26,11 @@ pod 'PromiseLite'
 
 ```swift
 fetchPodName()
-  .map          { editTwitterMessage(podName: $0) }
-  .flatMap      { postOnTwitter(message: $0) }
-  .map          { isSuccess in isSuccess ? "👍" : "👎" }
-  .map          { thumbs in label.text = thumbs }
-  .map(finally: { isLoading = false }
+  .map     { editTwitterMessage(podName: $0) }
+  .flatMap { postOnTwitter(message: $0) }
+  .map     { isSuccess in isSuccess ? "👍" : "👎" }
+  .map     { thumbs in label.text = thumbs }
+  .finally { isLoading = false }
 ```
 
 ### Throw error
@@ -50,12 +50,12 @@ fetchPodName()
 
 ```swift
 fetchPodName()
-  .map     { editTwitterMessage(podName: $0) }
-  .map     { /* ... */ throw AppError.somethingWentWrong }
-  .map     { /* not reached */ }
-  .map     { /* not reached */ }
-  .map    ({ _ in "👍" /*not reached*/}, rejection: { _ in "👎" /*reached!*/})
-  .map     { /* reached! */ }
+  .map { editTwitterMessage(podName: $0) }
+  .map { /* ... */ throw AppError.somethingWentWrong }
+  .map { /* not reached */ }
+  .map { /* not reached */ }
+  .map({ _ in "👍" /*not reached*/}, rejection: { _ in "👎" /*reached!*/})
+  .map { /* reached! */ }
   ...
 ```
 

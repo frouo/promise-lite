@@ -44,7 +44,7 @@ class UsageExamples: XCTestCase {
       .map { editTwitterMessage(podName: $0) }
       .flatMap { postOnTwitter(message: $0) }
       .map { isTweetPosted = $0 }
-      .map(finally: { expectation.fulfill() })
+      .finally { expectation.fulfill() }
 
     // then
     wait(for: [expectation], timeout: 1)
@@ -68,7 +68,7 @@ class UsageExamples: XCTestCase {
       .flatMap { postOnTwitter(message: $0) }
       .map({ _ in "👍" }, rejection: { _ in "👎" })
       .map { result = $0 }
-      .map(finally: { expectation.fulfill() })
+      .finally { expectation.fulfill() }
 
     // then
     wait(for: [expectation], timeout: 1)
