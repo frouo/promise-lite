@@ -61,12 +61,30 @@ class LogTests: XCTestCase {
     let _ = Promise<String>.reject(FooError.💥)
     XCTAssertEqual(debugger?.initAtIsCalled, "PromiseLite<String>")
   }
+
+  func test_debugger_is_triggered_when_promise_resolves() {
+    // when
+    Promise.resolve(description: "foo", 3)
+      .map { value in true }
+
+    // then
+    XCTAssertEqual(debugger?.events, ["foo-init",
+                                      "foo-resolves",
+                                      "PromiseLite<Bool>-init",
+                                      "PromiseLite<Bool>-resolves"])
+  }
 }
 
 private class PromiseLiteDebuggerMock: PromiseLiteDebugger {
   var initAtIsCalled: String?
+  var events = [String]()
 
   func promise(description: String, initAt date: Date) {
     initAtIsCalled = description
+    events.append(description + "-init")
+  }
+
+  func promise(description: String, resolvesAt: Date) {
+    events.append(description + "-resolves")
   }
 }

@@ -12,4 +12,10 @@ public protocol PromiseLiteDebugger {
   ///   - description: A short text that describes the promise, cf. `init`.
   ///   - date: The date when the promise's `init` has been called.
   func promise(description: String, initAt date: Date)
+
+  /// Tells the debugger that a promise resolves.
+  /// - Parameters:
+  ///   - description: A short text that describes the promise, cf. `init`.
+  ///   - date: The date when the promise's `resolve` gets called.
+  func promise(description: String, resolvesAt date: Date)
 }

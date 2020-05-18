@@ -52,7 +52,7 @@ public class PromiseLite<Value> {
     guard case .pending = state else { return }
 
     state = .fulfilled(value)
-    completions.forEach { $0.0(value) }
+    completions.forEach { wrap($0.0, value: value) }
   }
 
   private func reject(error: Error) {
@@ -62,10 +62,18 @@ public class PromiseLite<Value> {
     completions.forEach { $0.1(error) }
   }
 
+  private func wrap(_ completion: (Value) -> Void, value: Value) {
+    if let debugger = Configuration.debugger, let description = description {
+      debugger.promise(description: description, resolvesAt: Date())
+    }
+
+    completion(value)
+  }
+
   private func then(completion: @escaping (Value) -> Void, rejection: @escaping (Error) -> Void) {
     switch state {
     case .fulfilled(let value):
-      completion(value)
+      wrap(completion, value: value)
     case .rejected(let error):
       rejection(error)
     default:
@@ -95,7 +103,7 @@ public class PromiseLite<Value> {
   /// - Parameter rejection: A completion block that is called if the promise rejected.
   @discardableResult
   internal func flatMap<NewValue>(completion: @escaping (Value) throws -> PromiseLite<NewValue>, rejection: @escaping (Error) throws -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
-    return PromiseLite<NewValue> { resolveWith, rejectWith in
+    return PromiseLite<NewValue>(description: nil) { resolveWith, rejectWith in
       then(
         completion: { value in
           let promise: PromiseLite<NewValue>
