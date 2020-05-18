@@ -70,8 +70,8 @@ public class PromiseLite<Value> {
   /// - Parameter rejection: A completion block that is called if the promise rejected.
   @discardableResult
   internal func flatMap<NewValue>(completion: @escaping (Value) throws -> PromiseLite<NewValue>, rejection: @escaping (Error) throws -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
-    return PromiseLite<NewValue> { [weak self] resolveWith, rejectWith in
-      self?.then(
+    return PromiseLite<NewValue> { resolveWith, rejectWith in
+      then(
         completion: { value in
           let promise: PromiseLite<NewValue>
           do {
