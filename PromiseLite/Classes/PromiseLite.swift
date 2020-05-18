@@ -53,7 +53,7 @@ public class PromiseLite<Value> {
   @discardableResult
   public func flatMap<NewValue>(_ completion: @escaping (Value) throws -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
     flatMap(completion: completion,
-            rejection: { error in PromiseLite<NewValue> { _, rejectWith in rejectWith(error) }})
+            rejection: { error in PromiseLite<NewValue>.reject(error) })
   }
 
   /// Use `flatMap(_:)` and `flatCatch(_:)` instead.
@@ -77,7 +77,7 @@ public class PromiseLite<Value> {
           do {
             promise = try completion(value)
           } catch {
-            promise = PromiseLite<NewValue> { _, reject in reject(error) }
+            promise = PromiseLite<NewValue>.reject(error)
           }
           promise.then(completion: { newValue in resolveWith(newValue) },
                        rejection: { rejectWith($0) }) },
@@ -86,7 +86,7 @@ public class PromiseLite<Value> {
           do {
             promise = try rejection(error)
           } catch {
-            promise = PromiseLite<NewValue> { _, reject in reject(error) }
+            promise = PromiseLite<NewValue>.reject(error)
           }
           promise.then(completion: { resolveWith($0) },
                        rejection: { rejectWith($0) })
