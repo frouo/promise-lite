@@ -10,7 +10,7 @@ Lets chain asynchronous functions.
 
 `PromiseLite` is an implementation of [Javascript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) in Swift. 
 
-It is pure Swift, 100% tested, and very lightweight (~100 lines of code) #greentech 🌱
+It is pure Swift, 100% tested, and very lightweight, ~100 lines of code 🌱
 
 ## Installation
 
@@ -56,7 +56,7 @@ fetchPodName()
   .map   { /* not reached */ }
   .map   { /* not reached */ }
   .map   { /* not reached */ }
-  .catch { err in "👎" /*reached!*/}
+  .catch { err in "👎" /*reached!*/ }
   .map   { /* reached! */ }
   ...
 ```
@@ -64,11 +64,11 @@ fetchPodName()
 Error does propagate until it is catched using `catch`, then the chain is restored and continues.
 
 In other words:
-* a `map` /  `flatMap` completion block is reached if __all__ of the above promises __resolve__
-* a `catch` completion block is reached if __one__ of the promises above __rejects__ or __throws__
+* a `map` or `flatMap` completion block is reached if __all__ of the above promises __resolve__
+* a `catch` or `flatCatch` rejection block is reached if __one__ of the promises above __rejects__ or __throws__
 * once the error is catched, the chain is restored
 
-In other other words, considering the above example, lets say that `fetchPodName` calls __reject__ or __throw__, the following `map` completion blocks __are not__ called but the first `catch` completion block (ie. `{ _ in "👎" }`) __is__. Because the error in `fetchPodName` is now intercepted, the chain is restored and can continue to the next `map` completion block and so on.
+In other other words, considering the above example, lets say that `fetchPodName` calls __reject__ or __throw__, the following `map` completion blocks __are not__ called but the first `catch` completion block, ie. `{ _ in "👎" }`, __is__. Because the error in `fetchPodName` is now intercepted, the chain is restored and can continue to the next `map` completion block and so on.
 
 ### Create promises
 
@@ -101,8 +101,8 @@ func editTwitterMessage(podName: String) -> String {
 
 // Some helpers
 
-let aPromiseThatResolves = Promise.resolve("foo")
-let aPromiseThatRejects = Promise<String>.reject(FooError.💥)
+let aPromiseThatResolves = PromiseLite.resolve("foo")
+let aPromiseThatRejects = PromiseLite<String>.reject(FooError.💥)
 ```
 
 **Note:**
