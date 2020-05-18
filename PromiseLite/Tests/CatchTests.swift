@@ -54,4 +54,15 @@ class CatchTests: XCTestCase {
     // then
     XCTAssertEqual(result, 7)
   }
+
+  func test_catch_rejection_block_can_throw() {
+    var result: Error?
+    
+    Promise<Int>.reject(FooError.💥)
+      .catch { _ in throw FooError.🧨 }
+      .map { _ in XCTFail("Completion must not be called") }
+      .catch { error in result = error }
+
+    XCTAssertEqual(result as? FooError, FooError.🧨)
+  }
 }
