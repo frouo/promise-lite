@@ -85,6 +85,32 @@ class LogTests: XCTestCase {
                                       "PromiseLite<Int>-init",
                                       "PromiseLite<Int>-resolves"])
   }
+
+  func test_unflatten_scenario() {
+    // when
+    Promise.resolve(description: "p1", 3)
+      .map { value in throw FooError.💥 }
+      .map { value -> Bool in throw FooError.🧨 }
+      .catch { value in true }
+      .catch { value in throw FooError.💥 }
+      .map { value in "goo" }
+      .map { value in true }
+      .finally { throw FooError.🧨 }
+      .finally { 42 }
+
+    // then
+    XCTAssertEqual(debugger!.events, [
+      "p1-init", "p1-resolves",
+      "PromiseLite<()>-init", "PromiseLite<()>-rejects-error[💥]",
+      "PromiseLite<Bool>-init", "PromiseLite<Bool>-rejects-error[💥]",
+      "PromiseLite<Bool>-init", "PromiseLite<Bool>-resolves", // catch
+      "PromiseLite<Bool>-init", "PromiseLite<Bool>-resolves", // 2nd catch: it resolves because error has been handled in the first catch!
+      "PromiseLite<String>-init", "PromiseLite<String>-resolves",
+      "PromiseLite<Bool>-init", "PromiseLite<Bool>-resolves",
+      "PromiseLite<()>-init", "PromiseLite<()>-rejects-error[🧨]",
+      "PromiseLite<Int>-init", "PromiseLite<Int>-resolves"
+    ])
+  }
 }
 
 private class PromiseLiteDebuggerMock: PromiseLiteDebugger {
