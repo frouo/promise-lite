@@ -45,6 +45,22 @@ class LogTests: XCTestCase {
     let _ = Promise { resolve, _ in resolve(true) }
     XCTAssertEqual(debugger?.initAtIsCalled, "PromiseLite<Bool>")
   }
+
+  func test_static_resolve_helper_description() {
+    let _ = Promise.resolve(description: "goo", 2)
+    XCTAssertEqual(debugger?.initAtIsCalled, "goo")
+
+    let _ = Promise.resolve(2)
+    XCTAssertEqual(debugger?.initAtIsCalled, "PromiseLite<Int>")
+  }
+
+  func test_static_reject_helper_description() {
+    let _ = Promise<String>.reject(description: "noo", FooError.💥)
+    XCTAssertEqual(debugger?.initAtIsCalled, "noo")
+
+    let _ = Promise<String>.reject(FooError.💥)
+    XCTAssertEqual(debugger?.initAtIsCalled, "PromiseLite<String>")
+  }
 }
 
 private class PromiseLiteDebuggerMock: PromiseLiteDebugger {
