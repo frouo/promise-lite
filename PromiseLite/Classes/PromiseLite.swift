@@ -13,7 +13,7 @@ public class PromiseLite<Value> {
     case rejected(Error)
   }
 
-  let description: String?
+  private let description: String?
 
   private var state: State = .pending
   private lazy var completions = [((Value) -> Void, (Error) -> Void)]()
@@ -36,6 +36,11 @@ public class PromiseLite<Value> {
   /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
   internal init(description: String?, executor: (_ resolve: @escaping (Value) -> Void, _ reject: @escaping (Error) -> Void) throws -> Void) {
     self.description = description
+
+    if let debugger = Configuration.debugger, let description = description {
+      debugger.promise(description: description, initAt: Date())
+    }
+
     do {
       try executor(resolve, reject)
     } catch {

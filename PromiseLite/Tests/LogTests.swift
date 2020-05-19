@@ -6,27 +6,51 @@
 //
 
 import XCTest
-@testable import PromiseLite
+import PromiseLite
 
 private typealias Promise = PromiseLite
 
 class LogTests: XCTestCase {
-  func test_promise_can_init_with_a_debug_description() {
-    // given
-    let description = "foo"
+  private var debugger: PromiseLiteDebuggerMock?
 
-    // when
-    let promise = Promise(description) { resolve, _ in resolve(2) }
-
-    // then
-    XCTAssertEqual(promise.description, "foo")
+  override func setUp() {
+    super.setUp()
+    debugger = PromiseLiteDebuggerMock()
+    PromiseLiteConfiguration.debugger = debugger
   }
 
-  func test_promise_default_description() {
-    // when
-    let promise = Promise { resolve, _ in resolve(2) }
+  override func tearDown() {
+    super.tearDown()
+    debugger = nil
+  }
 
-    // then
-    XCTAssertEqual(promise.description, "PromiseLite<Int>")
+  func test_initAt_is_triggered_when_promise_with_description_executes() {
+    let _ = Promise("foo1") { resolve, _ in resolve(2) }
+    XCTAssertEqual(debugger?.initAtIsCalled, "foo1")
+
+    let _ = Promise<Int>("foo2") { _, reject in reject(FooError.💥) }
+    XCTAssertEqual(debugger?.initAtIsCalled, "foo2")
+
+    let _ = Promise<Int>("foo3") { _, _ in throw FooError.💥 }
+    XCTAssertEqual(debugger?.initAtIsCalled, "foo3")
+  }
+
+  func test_initAt_is_triggered_when_promise_without_description_executes() {
+    let _ = Promise { resolve, _ in resolve(2) }
+    XCTAssertEqual(debugger?.initAtIsCalled, "PromiseLite<Int>")
+
+    let _ = Promise { resolve, _ in resolve(1.23) }
+    XCTAssertEqual(debugger?.initAtIsCalled, "PromiseLite<Double>")
+
+    let _ = Promise { resolve, _ in resolve(true) }
+    XCTAssertEqual(debugger?.initAtIsCalled, "PromiseLite<Bool>")
+  }
+}
+
+private class PromiseLiteDebuggerMock: PromiseLiteDebugger {
+  var initAtIsCalled: String?
+
+  func promise(description: String, initAt date: Date) {
+    initAtIsCalled = description
   }
 }
