@@ -13,12 +13,29 @@ public class PromiseLite<Value> {
     case rejected(Error)
   }
 
+  let description: String?
+
   private var state: State = .pending
   private lazy var completions = [((Value) -> Void, (Error) -> Void)]()
 
   /// Creates a promise and executes the given executor.
   /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
-  public init(_ executor: (_ resolve: @escaping (Value) -> Void, _ reject: @escaping (Error) -> Void) throws -> Void) {
+  public convenience init(_ executor: (_ resolve: @escaping (Value) -> Void, _ reject: @escaping (Error) -> Void) throws -> Void) {
+    self.init(description: "PromiseLite<\(Value.self)>", executor: executor)
+  }
+
+  /// Creates a promise and executes the given executor.
+  /// - Parameter description: An optional custom description for the promise, eg. `fetchUserProfile`. Default description for a promise is `"PromiseLite<\(Value.self)>"`, eg. `"PromiseLite<Bool>"`.
+  /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
+  public convenience init(_ description: String, executor: (_ resolve: @escaping (Value) -> Void, _ reject: @escaping (Error) -> Void) throws -> Void) {
+    self.init(description: description, executor: executor)
+  }
+
+  /// Creates a promise and executes the given executor.
+  /// - Parameter description: An optional custom description for the promise.
+  /// - Parameter executor: The function to be executed by the constructor, during the process of constructing the promise.
+  internal init(description: String?, executor: (_ resolve: @escaping (Value) -> Void, _ reject: @escaping (Error) -> Void) throws -> Void) {
+    self.description = description
     do {
       try executor(resolve, reject)
     } catch {
