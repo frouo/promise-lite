@@ -111,6 +111,32 @@ class LogTests: XCTestCase {
       "PromiseLite<Int>-init", "PromiseLite<Int>-resolves"
     ])
   }
+
+  func test_flat_scenario() {
+    // when
+    Promise.resolve(description: "p1", 3)
+      .flatMap { value -> Promise<Int> in throw FooError.💥 }
+      .flatMap { value -> Promise<Bool> in throw FooError.🧨 }
+      .flatCatch { error in Promise.resolve(description: "first-catch", true) }
+      .flatCatch { error in Promise<Bool>.reject(description: "2nd-catch", FooError.💥) }
+      .flatMap { value in Promise.resolve(description: "goo", "goo") }
+      .flatMap { value in Promise.resolve(description: "a-bool", true) }
+      .flatFinally { Promise<()>.reject(description: "1st-finally", FooError.🧨) }
+      .flatFinally { Promise.resolve(description: "2nd-finally", 42) }
+
+    // then
+    XCTAssertEqual(debugger!.events, [
+      "p1-init", "p1-resolves",
+      "PromiseLite<Int>-init", "PromiseLite<Int>-rejects-error[💥]",
+      "PromiseLite<Bool>-init", "PromiseLite<Bool>-rejects-error[💥]",
+      "first-catch-init", "first-catch-resolves", // catch
+      "PromiseLite<Bool>-init", "PromiseLite<Bool>-resolves", // 2nd catch: promise "2nd-catch" is not even initialized because error has been handled above!
+      "goo-init", "goo-resolves",
+      "a-bool-init", "a-bool-resolves",
+      "1st-finally-init", "1st-finally-rejects-error[🧨]",
+      "2nd-finally-init", "2nd-finally-resolves"
+    ])
+  }
 }
 
 private class PromiseLiteDebuggerMock: PromiseLiteDebugger {
