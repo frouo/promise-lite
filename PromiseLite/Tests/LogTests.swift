@@ -137,6 +137,17 @@ class LogTests: XCTestCase {
       "2nd-finally-init", "2nd-finally-resolves"
     ])
   }
+
+  func test_to_cover_default_debugger_implementation() {
+    var logs = [String]()
+    PromiseLiteConfiguration.debugger = DefaultPromiseLiteDebugger { logs.append($0) }
+
+    Promise<Int>.reject(FooError.💥)
+      .catch { error in 3 }
+
+    XCTAssertEqual(logs[0], "🔗 | PromiseLite<Int> rejects ❌ in 0.00 sec with error: 💥")
+    XCTAssertEqual(logs[1], "🔗 | PromiseLite<Int> resolves ✅ in 0.00 sec")
+  }
 }
 
 private class PromiseLiteDebuggerMock: PromiseLiteDebugger {
