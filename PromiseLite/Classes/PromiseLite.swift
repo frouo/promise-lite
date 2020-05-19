@@ -59,7 +59,7 @@ public class PromiseLite<Value> {
     guard case .pending = state else { return }
 
     state = .rejected(error)
-    completions.forEach { $0.1(error) }
+    completions.forEach { wrap($0.1, error: error) }
   }
 
   private func wrap(_ completion: (Value) -> Void, value: Value) {
@@ -70,12 +70,20 @@ public class PromiseLite<Value> {
     completion(value)
   }
 
+  private func wrap(_ rejection: (Error) -> Void, error: Error) {
+    if let debugger = Configuration.debugger, let description = description {
+      debugger.promise(description: description, rejectsAt: Date(), error: error)
+    }
+
+    rejection(error)
+  }
+
   private func then(completion: @escaping (Value) -> Void, rejection: @escaping (Error) -> Void) {
     switch state {
     case .fulfilled(let value):
       wrap(completion, value: value)
     case .rejected(let error):
-      rejection(error)
+      wrap(rejection, error: error)
     default:
       completions.append((completion, rejection))
     }

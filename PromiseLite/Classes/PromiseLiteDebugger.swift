@@ -18,4 +18,11 @@ public protocol PromiseLiteDebugger {
   ///   - description: A short text that describes the promise, cf. `init`.
   ///   - date: The date when the promise's `resolve` gets called.
   func promise(description: String, resolvesAt date: Date)
+
+  /// Tells the debugger that a promise rejects.
+  /// - Parameters:
+  ///   - description: A short text that describes the promise, cf. `init`.
+  ///   - date: The date when the promise's `reject` gets called.
+  ///   - error: The reason why the promise rejects.
+  func promise(description: String, rejectsAt date: Date, error: Error)
 }
