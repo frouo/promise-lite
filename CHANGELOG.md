@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 2.0.0
+
+* Deprecated functions has been removed
+
 ## [1.4.0](https://github.com/frouo/promise-lite/releases/tag/1.4.0)
 
 * Deal with rejected cases using `catch` or `flatCatch` functions
