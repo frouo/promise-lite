@@ -24,9 +24,7 @@ extension PromiseLite {
   /// - Parameter completion: A completion block that is called if the promise is settled, whether fulfilled or rejected.
   @discardableResult
   public func finally<NewValue>(_ completion: @escaping () throws -> NewValue) -> PromiseLite<NewValue> {
-    let promise: () -> PromiseLite<NewValue> = { PromiseLite<NewValue> { resolve, _ in resolve(try completion()) }}
-    return flatMap(completion: { value -> PromiseLite<NewValue> in promise() },
-                   rejection: { error -> PromiseLite<NewValue> in promise() })
+    flatFinally { PromiseLite<NewValue>.resolve(try completion()) }
   }
 
   /// See `flatFinally` instead.
