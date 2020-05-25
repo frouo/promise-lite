@@ -41,11 +41,12 @@ public class PromiseLite<Value> {
   }
 
   private func then(completion: @escaping (Value) -> Void, rejection: @escaping (Error) -> Void) {
-    if case let State.fulfilled(value) = state {
+    switch state {
+    case .fulfilled(let value):
       completion(value)
-    } else if case let State.rejected(error) = state {
+    case .rejected(let error):
       rejection(error)
-    } else {
+    default:
       completions.append((completion, rejection))
     }
   }
