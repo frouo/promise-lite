@@ -5,8 +5,8 @@ Pod::Spec.new do |s|
 
   s.description      = <<-DESC
 Lets chain asynchronous functions.
-This is a lightweight implementation of Javascript Promise.
-It is pure Swift, 100% tested, and very lightweight (~100 lines of code) #greentech 🌱
+This is an implementation of Javascript Promise.
+It is pure Swift, 100% tested, and very lightweight, ~100 lines of code 🌱
                        DESC
 
   s.homepage         = 'https://github.com/frouo/promise-lite'
