@@ -53,6 +53,7 @@ Use `catch` to deal with rejected cases. Once dealt with, the chaining continues
 ```swift
 fetchPodName()
   .map   { editTwitterMessage(podName: $0) }
+  .map   { /* ... */ throw AppError.somethingWentWrong }
   .map   { /* not reached */ }
   .map   { /* not reached */ }
   .map   { /* not reached */ }
