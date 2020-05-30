@@ -12,7 +12,7 @@ before_install:
 
 script:
 - set -o pipefail && xcodebuild test -destination 'platform=iOS Simulator,name=iPhone 11,OS=13.3' -enableCodeCoverage YES -workspace Example/PromiseLite.xcworkspace -scheme PromiseLite_Tests ONLY_ACTIVE_ARCH=YES | xcpretty
-- pod lib lint
+- pod lib lint --allow-warnings
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)

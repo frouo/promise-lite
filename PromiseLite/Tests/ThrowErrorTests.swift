@@ -78,49 +78,4 @@ class ThrowErrorTests: XCTestCase {
     XCTAssertFalse(completionIsCalled)
     XCTAssertEqual(result as? FooError, FooError.💥)
   }
-
-  func test_rejection_handler_is_called_when_flatMap_rejection_throws() {
-    // given
-    var result: Error?
-    var completionIsCalled = false
-    let executor: (Resolve<Int>, Reject) throws -> Void = { _, reject in
-      reject(FooError.💥)
-    }
-    let aPromise = Promise<Int>(executor)
-
-    // when
-    PromiseLite<Int>(executor)
-      .flatMap { _ -> Promise<Int> in aPromise }
-      .flatCatch { _ -> Promise<Int> in throw FooError.🧨 }
-      .flatMap { _ -> Promise<Int> in
-          completionIsCalled = true
-          return aPromise }
-      .flatCatch { error -> Promise<Int> in
-          result = error
-          return aPromise }
-
-    // then
-    XCTAssertFalse(completionIsCalled)
-    XCTAssertEqual(result as? FooError, FooError.🧨)
-  }
-
-  func test_rejection_handler_is_called_when_map_rejection_throws() {
-    // given
-    var result: Error?
-    var completionIsCalled = false
-    let executor: (Resolve<Int>, Reject) throws -> Void = { _, reject in
-      reject(FooError.💥)
-    }
-
-    // when
-    PromiseLite<Int>(executor)
-      .map { _ in }
-      .catch { _ in throw FooError.🧨 }
-      .map { _ in completionIsCalled = true }
-      .catch { error in result = error }
-
-    // then
-    XCTAssertFalse(completionIsCalled)
-    XCTAssertEqual(result as? FooError, FooError.🧨)
-  }
 }

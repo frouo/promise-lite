@@ -259,4 +259,20 @@ class PromiseLiteTests: XCTestCase {
     wait(for: [expectation], timeout: 1)
     XCTAssertEqual(result, "foo goo 8 🎉")
   }
+
+  func test_map_rejection() {
+    var result: Error?
+    PromiseLite<String>.reject(FooError.💥)
+      .map({_ -> String in XCTFail("Should not reach"); return "ø" },
+           rejection: { error in result = error; return "restored" })
+    XCTAssertEqual(result as? FooError, FooError.💥)
+  }
+
+  func test_flatMap_rejection() {
+    var result: Error?
+    PromiseLite<String>.reject(FooError.💥)
+      .flatMap({_ -> Promise<String> in XCTFail("Should not reach"); return Promise.resolve("ø") },
+               rejection: { error in result = error; return Promise.resolve("restored") })
+    XCTAssertEqual(result as? FooError, FooError.💥)
+  }
 }

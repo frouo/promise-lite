@@ -8,9 +8,9 @@
 
 Lets chain asynchronous functions.
 
-`PromiseLite` is an implementation of [Javascript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) in Swift. 
+`PromiseLite` is an implementation of [Javascript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) in Swift.
 
-It is pure Swift, 100% tested, and very lightweight, ~100 lines of code 🌱
+It is pure Swift, 100% tested, and very lightweight, ~150 lines of code 🌱
 
 ## Installation
 
@@ -25,9 +25,9 @@ pod 'PromiseLite'
 ### Chain promises
 
 ```swift
-fetchPodName()
-  .map     { editTwitterMessage(podName: $0) }
-  .flatMap { postOnTwitter(message: $0) }
+fetchUser(id: "123")
+  .map     { addUsername(user: $0) }
+  .flatMap { saveInDatabase(user: $0) }
   .map     { isSuccess in isSuccess ? "👍" : "👎" }
   .map     { thumbs in label.text = thumbs }
   .finally { isLoading = false }
@@ -38,8 +38,8 @@ fetchPodName()
 All chaining functions support error throwing.
 
 ```swift
-fetchPodName()
-  .map { editTwitterMessage(podName: $0) }
+fetchUser(id: "123")
+  .map { addUsername(user: $0) }
   .map { /* ... */ throw AppError.somethingWentWrong }
   .map { /* not reached */ }
   .map { /* not reached */ }
@@ -48,11 +48,11 @@ fetchPodName()
 
 ### Catch error
 
-Use `catch` to deal with rejected cases. Once dealt with, the chaining continues.
+Use `catch` to deal with rejected cases.
 
 ```swift
-fetchPodName()
-  .map   { editTwitterMessage(podName: $0) }
+fetchUser(id: "123")
+  .map   { addUsername(user: $0) }
   .map   { /* ... */ throw AppError.somethingWentWrong }
   .map   { /* not reached */ }
   .map   { /* not reached */ }
@@ -62,42 +62,45 @@ fetchPodName()
   ...
 ```
 
-Error does propagate until it is catched using `catch`, then the chain is restored and continues.
+Error does propagate until it is catched using `catch`, then the chaining is restored and continues.
 
 In other words:
-* a `map` or `flatMap` completion block is reached if __all__ of the above promises __resolve__
-* a `catch` or `flatCatch` rejection block is reached if __one__ of the promises above __rejects__ or __throws__
-* once the error is catched, the chain is restored
 
-In other other words, considering the above example, lets say that `fetchPodName` calls __reject__ or __throw__, the following `map` completion blocks __are not__ called but the first `catch` completion block, ie. `{ _ in "👎" }`, __is__. Because the error in `fetchPodName` is now intercepted, the chain is restored and can continue to the next `map` completion block and so on.
+- a `map` or `flatMap` completion block is reached if **all** of the above promises **resolve**
+- a `catch` or `flatCatch` rejection block is reached if **one** of the promises above **rejects** or **throws**
+- once the error is catched, the chaining is restored
+
+In other other words, considering the above example, lets say that `fetchUser` calls **reject** or **throw**, the following `map` completion blocks **are not** called but the first `catch` completion block, ie. `{ _ in "👎" }`, **is**. Because the error in `fetchUser` is now intercepted, the chaining is restored and can continue to the next `map` completion block and so on.
 
 ### Create promises
 
 A promise represents the eventual result of asynchronous operation. Even synchronous indeed.
 
 ```swift
-func fetchPodName() -> PromiseLite<String> {
-  PromiseLite<String> { resolve, reject in
-    async(after: 0.1) {
-      resolve("PromiseLite") // ✅ async retrieving pod name "PromiseLite" is a success, call `resolve`
-      // if anything goes wrong, call `reject` or `throw`
-    }
-  }
-}
+func fetchUser(id: String) -> PromiseLite<User> {
+  PromiseLite<User> { resolve, reject in
+    URLSession.shared.dataTask(with: Api.fetchUser(id).asRequest()) { data, response, error in
+      if let error = error {
+        reject(error) // ❌ an error occured, call `reject`
+        return
+      }
 
-func postOnTwitter(message: String) -> PromiseLite<Bool> {
-  PromiseLite<Bool> { resolve, reject in
-    async(after: 0.1) {
-      reject(AppError.invalidToken) // ❌ async posting message on twitter fails, call `reject` or `throw`
-      // if it is a success, call `resolve`
+      guard let data = data else {
+        reject(ApiError.dataNotFound) // ❌ could not retrieve data, call `reject` with an error
+        return
+      }
+
+      let user = try JSONDecoder().decode(User.self, from: data) // ❓ executor can throw so call `try` peacefully, no need to call `reject`
+      resolve(user) // ✅ fetched user with success, call `resolve`
     }
   }
 }
 
 // Note that synchronous function can be chained to promise using `map`.
 
-func editTwitterMessage(podName: String) -> String {
-  "Lets chain async functions with \(podName)!" // ✅ sync returning the twitter message
+func addUsername(user: User) -> User {
+  user.username = "\(user.firstname) \(user.lastname)"
+  return user // ✅
 }
 
 // Some helpers
@@ -107,8 +110,55 @@ let aPromiseThatRejects = PromiseLite<String>.reject(FooError.💥)
 ```
 
 **Note:**
-* a Promise can `throw`. It is equivalent to calling `do { try myFunctionThatThrows() } catch { reject(error) }`.
-* the first `resolve`, `reject` or `throw` that is reached __wins__ and any further calls will be __ignored__.  
+
+- The executor function, ie. `{ resolve, reject in ... }` is executed right away by the initializer during the process of initializing the promise object.
+- a Promise can `throw`. It is equivalent to calling `do { try myFunctionThatThrows() } catch { reject(error) }`.
+- the first `resolve`, `reject` or `throw` that is reached **wins** and any further calls will be **ignored**.
+
+## How to debug a chaining?
+
+Watch promise lifecycle by setting `PromiseLiteConfiguration.debugger` instance. This instance is called when a promise starts and when it resolves or rejects. `PromiseLite` provides a default implementation of the `PromiseLiteDebugger` protocol: `DefaultPromiseLiteDebugger(output:)`.
+
+```swift
+// Do the following to print default debugger output in the console.
+PromiseLiteConfiguration.debugger = DefaultPromiseLiteDebugger { print($0) }
+```
+
+In addition, a promise can be initialized with a description so it is easier to understand which promise is currently being executed. By default, the description of a promise is `PromiseLite<TheType>`.
+
+```swift
+func fetchUser(id: String) -> PromiseLite<User> {
+  PromiseLite<User>("fetch user") { resolve, reject in
+    ...
+  }
+}
+
+func saveInDatabase(user: User) -> PromiseLite<Bool> {
+  PromiseLite<Bool>("save in db") { resolve, reject in
+    ...
+  }
+}
+
+fetchUser(id: "123")
+  .flatMap { saveInDatabase(user: $0) }
+  .map { [weak self] _ in self?.updateUI() }
+  .catch { [weak self] err in self?.updateUI(error: err) }
+
+// The above chaining will result in the following logs in the console:
+// 🔗 | fetch user resolves ✅ in 1.36 sec
+// 🔗 | save in db resolves ✅ in 0.72 sec
+// 🔗 | PromiseLite<()> resolves ✅ in 0.00 sec
+// 🔗 | PromiseLite<()> resolves ✅ in 0.00 sec
+// Note that `map` and `catch` implicitly creates a promise with the default description. Since `updateUI` is a function that returns void, the type's value of the implicity created promise is `()`.
+// Note that `catch` actually resolves because it implicitly creates a promise that resolves regardless of whether the previous promise resolved or rejected.
+
+// In case, `fetchUser(id:)` would reject, the above chaining would result in the following logs in the console:
+// 🔗 | fetch user rejects ❌ in 1.36 sec
+// 🔗 | save in db rejects ❌ in 0.00 sec
+// 🔗 | PromiseLite<()> rejects ❌ in 0.00 sec
+// 🔗 | PromiseLite<()> resolves ✅ in 0.00 sec
+// Note that rejection does propagate until `catch` handle the error returning a promise that resolves.
+```
 
 ## Authors
 

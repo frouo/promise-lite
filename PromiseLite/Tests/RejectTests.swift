@@ -23,7 +23,7 @@ class RejectTests: XCTestCase {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
 
-  func test_rejection_handler_is_called_when_promise_rejects_sync() {
+  func test_catch_rejection_block_is_called_when_promise_rejects_sync() {
     // given
     var isFlatMapCompletionCalled = false
     var resultFlatMap: Error?
@@ -55,7 +55,7 @@ class RejectTests: XCTestCase {
     XCTAssertEqual(resultMap as? FooError, FooError.💥)
   }
 
-  func test_rejection_handler_is_called_when_promise_rejects_async() {
+  func test_catch_rejection_handler_is_called_when_promise_rejects_async() {
     // given
     let expectationFlatMap = XCTestExpectation()
     var isFlatMapCompletionCalled = false

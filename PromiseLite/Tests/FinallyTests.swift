@@ -125,4 +125,40 @@ class FinallyTests: XCTestCase {
     XCTAssertNil(string)
     XCTAssertEqual(result as? FooError, FooError.💥)
   }
+
+  func test_deprecated_map_finally_when_resolves() {
+    var isReachedWhenResolve = false
+
+    PromiseLite.resolve(3)
+      .map(finally: { isReachedWhenResolve = true })
+
+    XCTAssertTrue(isReachedWhenResolve)
+  }
+
+  func test_deprecated_map_finally_when_rejects() {
+    var isReachedWhenReject = false
+
+    PromiseLite<Int>.reject(FooError.💥)
+      .map(finally: { isReachedWhenReject = true })
+
+    XCTAssertTrue(isReachedWhenReject)
+  }
+
+  func test_deprecated_flatMap_finally_when_resolves() {
+    var isReachedWhenResolve = false
+
+    PromiseLite.resolve(3)
+      .flatMap(finally: { () -> Promise<Int> in isReachedWhenResolve = true; return Promise.resolve(7) })
+
+    XCTAssertTrue(isReachedWhenResolve)
+  }
+
+  func test_deprecated_flatMap_finally_when_rejects() {
+    var isReachedWhenReject = false
+
+    PromiseLite<Int>.reject(FooError.💥)
+      .flatMap(finally: { () -> Promise<Int> in isReachedWhenReject = true; return Promise.resolve(7) })
+
+    XCTAssertTrue(isReachedWhenReject)
+  }
 }
