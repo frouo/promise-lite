@@ -10,7 +10,7 @@ Lets chain asynchronous functions.
 
 `PromiseLite` is an implementation of [Javascript Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) in Swift.
 
-It is pure Swift, 100% tested, and very lightweight, ~100 lines of code 🌱
+It is pure Swift, 100% tested, and very lightweight, ~150 lines of code 🌱
 
 ## Installation
 
