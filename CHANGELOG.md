@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 1.5.0
+
+- Debug promises by setting `PromiseLiteConfiguration.debugger` variable
+- Introduce `DefaultPromiseLiteDebugger`, a simple implementation of `PromiseLiteDebugger`
+
 ## 1.4.0
 
 - Deal with rejected cases using `catch` or `flatCatch` functions
