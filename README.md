@@ -48,7 +48,7 @@ fetchUser(id: "123")
 
 ### Catch error
 
-Use `catch` to deal with rejected cases. Once dealt with, the chaining continues.
+Use `catch` to deal with rejected cases.
 
 ```swift
 fetchUser(id: "123")
@@ -62,15 +62,15 @@ fetchUser(id: "123")
   ...
 ```
 
-Error does propagate until it is catched using `catch`, then the chain is restored and continues.
+Error does propagate until it is catched using `catch`, then the chaining is restored and continues.
 
 In other words:
 
 - a `map` or `flatMap` completion block is reached if **all** of the above promises **resolve**
 - a `catch` or `flatCatch` rejection block is reached if **one** of the promises above **rejects** or **throws**
-- once the error is catched, the chain is restored
+- once the error is catched, the chaining is restored
 
-In other other words, considering the above example, lets say that `fetchUser` calls **reject** or **throw**, the following `map` completion blocks **are not** called but the first `catch` completion block, ie. `{ _ in "👎" }`, **is**. Because the error in `fetchUser` is now intercepted, the chain is restored and can continue to the next `map` completion block and so on.
+In other other words, considering the above example, lets say that `fetchUser` calls **reject** or **throw**, the following `map` completion blocks **are not** called but the first `catch` completion block, ie. `{ _ in "👎" }`, **is**. Because the error in `fetchUser` is now intercepted, the chaining is restored and can continue to the next `map` completion block and so on.
 
 ### Create promises
 
@@ -111,15 +111,16 @@ let aPromiseThatRejects = PromiseLite<String>.reject(FooError.💥)
 
 **Note:**
 
-- The executor function - ie. `{ resolve, reject in ... }` - is executed by the initializer, during the process of initializing the promise object.
+- The executor function, ie. `{ resolve, reject in ... }` is executed right away by the initializer during the process of initializing the promise object.
 - a Promise can `throw`. It is equivalent to calling `do { try myFunctionThatThrows() } catch { reject(error) }`.
 - the first `resolve`, `reject` or `throw` that is reached **wins** and any further calls will be **ignored**.
 
 ## How to debug a chaining?
 
-Follow promise lifecycle by setting `PromiseLiteConfiguration.debugger` instance. This instance is called when a promise has started and when it resolved or rejected. PromiseLite provides a default implementation of the `PromiseLiteDebugger` protocol: `DefaultPromiseLiteDebugger(output:)`.
+Watch promise lifecycle by setting `PromiseLiteConfiguration.debugger` instance. This instance is called when a promise starts and when it resolves or rejects. `PromiseLite` provides a default implementation of the `PromiseLiteDebugger` protocol: `DefaultPromiseLiteDebugger(output:)`.
 
 ```swift
+// Do the following to print default debugger output in the console.
 PromiseLiteConfiguration.debugger = DefaultPromiseLiteDebugger { print($0) }
 ```
 
