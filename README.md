@@ -1,3 +1,5 @@
+![carbon](https://drive.google.com/uc?export=view&id=17l58qpGuBGsmN2o-Vf-6X0mcGgNam8BE)
+
 # PromiseLite
 
 [![CI Status](https://travis-ci.com/frouo/promise-lite.svg?branch=master)](https://travis-ci.com/github/frouo/promise-lite)
