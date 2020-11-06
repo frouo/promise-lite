@@ -1,4 +1,4 @@
-![carbon](https://drive.google.com/uc?export=view&id=17l58qpGuBGsmN2o-Vf-6X0mcGgNam8BE)
+![chaining](https://cocoricostudio.com/promiselite/readme.png)
 
 # PromiseLite
 
