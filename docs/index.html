@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PromiseLite  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a title="PromiseLite  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html">PromiseLite 1.5.0 Docs</a> (96% documented)</p>
+        <p class="header-right">
+          <form role="search" action="search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html">PromiseLite Reference</a>
+        <img id="carat" src="img/carat.png" />
+        PromiseLite  Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/DefaultPromiseLiteDebugger.html">DefaultPromiseLiteDebugger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/PromiseLite.html">PromiseLite</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols/PromiseLiteDebugger.html">PromiseLiteDebugger</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Structs/PromiseLiteConfiguration.html">PromiseLiteConfiguration</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            
+            <h1 id='promiselite' class='heading'>PromiseLite</h1>
+
+<p><strong>Lets chain async and synch functions</strong></p>
+
+<p><a href="https://travis-ci.com/github/frouo/promise-lite"><img src="https://travis-ci.com/frouo/promise-lite.svg?branch=master" alt="CI Status"></a>
+<a href="https://codecov.io/gh/frouo/promise-lite"><img src="https://codecov.io/gh/frouo/promise-lite/branch/master/graph/badge.svg" alt="codecov"></a>
+<a href="https://cocoapods.org/pods/PromiseLite"><img src="https://img.shields.io/cocoapods/v/PromiseLite.svg?style=flat" alt="Version"></a>
+<a href="https://cocoapods.org/pods/PromiseLite"><img src="https://img.shields.io/cocoapods/l/PromiseLite.svg?style=flat" alt="License"></a>
+<a href="https://cocoapods.org/pods/PromiseLite"><img src="https://img.shields.io/cocoapods/p/PromiseLite.svg?style=flat" alt="Platform"></a></p>
+
+<p>PromiseLite is an implementation of <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Javascript Promises</a> concept, in Swift.</p>
+
+<p>It is pure Swift, 100% tested, and very lightweight, ~150 lines of code.</p>
+<h2 id='installation' class='heading'>Installation</h2>
+
+<p>PromiseLite is available through <a href="https://cocoapods.org">CocoaPods</a>. Add the following line to your Podfile:</p>
+<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'PromiseLite'</span>
+</code></pre>
+
+<p>Tip: add the line <code>typealias Promise = PromiseLite</code> in your <code>AppDelegate.swift</code> (or elsewhere), it&rsquo;s shorter. For the rest of the page, I assume you did that.</p>
+<h2 id='get-started' class='heading'>Get started</h2>
+
+<p>Start using promises in your code and chain async and sync functions within 5 minutes.</p>
+
+<p>Let&rsquo;s say you have the following function that uses completion block to deal with asynchronous operation. You might be familiar with:</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetch</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Data</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTask</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">error</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">data</span> <span class="o">=</span> <span class="n">data</span> <span class="p">{</span>
+      <span class="nf">completion</span><span class="p">(</span><span class="o">.</span><span class="nf">success</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nf">completion</span><span class="p">(</span><span class="o">.</span><span class="nf">failure</span><span class="p">(</span><span class="kt">AppError</span><span class="o">.</span><span class="n">noData</span><span class="p">))</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>To be able to chain calls, you have to get rid of the completion block. Say hello to plromises!</p>
+
+<p>Create another function that returns the promise of retrieving <code>Data</code>. In this new function, you can use the previously defined <code>fetch(url:completion:)</code> function within the <code>Promise</code>&lsquo;s closure:</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetch</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kt">Promise</span> <span class="p">{</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">reject</span> <span class="k">in</span>
+    <span class="nf">fetch</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span> <span class="p">{</span> <span class="n">result</span> <span class="k">in</span>
+      <span class="k">switch</span> <span class="n">result</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="o">.</span><span class="nf">success</span><span class="p">(</span><span class="k">let</span> <span class="nv">data</span><span class="p">):</span> <span class="nf">resolve</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+      <span class="k">case</span> <span class="o">.</span><span class="nf">failure</span><span class="p">(</span><span class="k">let</span> <span class="nv">error</span><span class="p">):</span> <span class="nf">reject</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Now you can use <code>flatMap</code> to chain promises together, and <code>map</code> to chain a promise to a regular function.</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://your.endpoint.com/user/36"</span><span class="p">)</span><span class="o">!</span>
+
+<span class="nf">fetch</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="k">try</span> <span class="kt">JSONDecoder</span><span class="p">()</span><span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="kt">User</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">18</span> <span class="p">?</span> <span class="nv">$0</span> <span class="p">:</span> <span class="k">try</span> <span class="p">{</span> <span class="k">throw</span> <span class="kt">AppError</span><span class="o">.</span><span class="n">userIsMinor</span> <span class="p">}()</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nf">fetchContents</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="nf">display</span><span class="p">(</span><span class="nv">contents</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="k">catch</span>   <span class="p">{</span> <span class="nf">display</span><span class="p">(</span><span class="nv">error</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+</code></pre>
+
+<p><strong>That&rsquo;s it!</strong> 🎯</p>
+
+<p>Just for comparison, the above chaining is equivalent to the following code using completion blocks 🤯</p>
+<pre class="highlight swift"><code><span class="c1">// fetch(url: url) { result in</span>
+<span class="c1">//   switch result {</span>
+<span class="c1">//   case .success(let data):</span>
+<span class="c1">//     do {</span>
+<span class="c1">//       let user = try JSONDecoder().decode(User.self, from: data)</span>
+<span class="c1">//</span>
+<span class="c1">//       guard user.age &gt;= 18 else {</span>
+<span class="c1">//        display(error: AppError.userIsMinor)</span>
+<span class="c1">//        return</span>
+<span class="c1">//       }</span>
+<span class="c1">//</span>
+<span class="c1">//       fetchContents(user: user) { result2 in</span>
+<span class="c1">//         switch result2:</span>
+<span class="c1">//         case .success(let contents): display(contents: contents)</span>
+<span class="c1">//         case .failure(let error): display(error: error)</span>
+<span class="c1">//       }</span>
+<span class="c1">//     } catch {</span>
+<span class="c1">//       display(error: error)</span>
+<span class="c1">//     }</span>
+<span class="c1">//   case .failure(let error):</span>
+<span class="c1">//     display(error: error)</span>
+<span class="c1">//   }</span>
+<span class="c1">// }</span>
+</code></pre>
+<h2 id='promises' class='heading'>Promises</h2>
+<h3 id='what-is-a-promise' class='heading'>What is a promise?</h3>
+
+<p>A promise represents the eventual result of an operation (async or sync).</p>
+
+<p>Its initialization parameter is called the <code>executor</code>. It is a closure that takes two functions as parameters:</p>
+
+<ul>
+<li><code>resolve</code>: a function that takes a value parameter (the result of the promise)</li>
+<li><code>reject</code>: a funtion that takes an error parameter</li>
+</ul>
+
+<p>For exemple, we can define a promise this way:</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">divide</span><span class="p">(</span><span class="nv">a</span><span class="p">:</span> <span class="kt">Double</span><span class="p">,</span> <span class="n">by</span> <span class="nv">b</span><span class="p">:</span> <span class="kt">Double</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">Double</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">let</span> <span class="nv">executor</span><span class="p">:</span> <span class="p">((</span><span class="kt">Double</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span> <span class="p">(</span><span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span> <span class="o">=</span> <span class="p">{</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">reject</span> <span class="k">in</span>
+    <span class="n">b</span> <span class="o">!=</span> <span class="mi">0</span>
+      <span class="p">?</span> <span class="nf">resolve</span><span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
+      <span class="p">:</span> <span class="nf">reject</span><span class="p">(</span><span class="kt">AppError</span><span class="o">.</span><span class="n">cannotDivideByZero</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">Double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">executor</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Fortunately Swift offers some syntax shorthand and is able to infer types. The preceding code can therefore be simplified as follows:</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">divide</span><span class="p">(</span><span class="nv">a</span><span class="p">:</span> <span class="kt">Double</span><span class="p">,</span> <span class="n">by</span> <span class="nv">b</span><span class="p">:</span> <span class="kt">Double</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">Double</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kt">Promise</span> <span class="p">{</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">reject</span> <span class="k">in</span>
+    <span class="n">b</span> <span class="o">!=</span> <span class="mi">0</span>
+      <span class="p">?</span> <span class="nf">resolve</span><span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
+      <span class="p">:</span> <span class="nf">reject</span><span class="p">(</span><span class="kt">AppError</span><span class="o">.</span><span class="n">cannotDivideByZero</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<h3 id='more-exemples' class='heading'>More exemples&hellip;</h3>
+
+<p>Here is an example of a sync function that takes an string parameter and returns the promise of an URL.</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">url</span><span class="p">(</span><span class="n">from</span> <span class="nv">urlStr</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">URL</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kt">Promise</span> <span class="p">{</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">reject</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="n">urlStr</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nf">resolve</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="c1">// ✅ the url string is valid, call `resolve`</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nf">reject</span><span class="p">(</span><span class="kt">AppError</span><span class="o">.</span><span class="n">invalidUrl</span><span class="p">)</span> <span class="c1">// ❌ the url string is not valid, call `reject`</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Here is a suggestion for wrapping <code>dataTask</code> into a promise that retrieves <code>Data</code>:</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetch</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kt">Promise</span> <span class="p">{</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">reject</span> <span class="k">in</span>
+    <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTask</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">error</span> <span class="k">in</span>
+      <span class="k">if</span> <span class="k">let</span> <span class="nv">error</span> <span class="o">=</span> <span class="n">error</span> <span class="p">{</span>
+        <span class="nf">reject</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="c1">// ❌ an error occured, call `reject` or `throw`</span>
+        <span class="k">return</span>
+      <span class="p">}</span>
+
+      <span class="k">guard</span> <span class="k">let</span> <span class="nv">data</span> <span class="o">=</span> <span class="n">data</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="kt">AppError</span><span class="o">.</span><span class="n">noData</span> <span class="c1">// ❌ could not retrieve data, call `reject` or `throw`</span>
+        <span class="k">return</span>
+      <span class="p">}</span>
+
+      <span class="nf">resolve</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1">// ✅ data retrieved, call `resolve`</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<h3 id='helpers' class='heading'>Helpers</h3>
+<pre class="highlight swift"><code><span class="kt">Promise</span><span class="o">.</span><span class="nf">resolve</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span> <span class="c1">// is equivalent to `Promise { resolve, _ in resolve("foo") }`</span>
+</code></pre>
+<pre class="highlight swift"><code><span class="kt">Promise</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;.</span><span class="nf">reject</span><span class="p">(</span><span class="kt">AppError</span><span class="o">.</span><span class="n">💥</span><span class="p">)</span> <span class="c1">// is equivalent to `Promise&lt;String&gt; { _, reject in reject(AppError.💥) }`</span>
+
+<span class="c1">// Note that, in this situation, you must specify the type `&lt;String&gt;` because there is nothing in the executor that can help Swift guess the type.</span>
+</code></pre>
+<h3 id='good-to-know' class='heading'>Good to know</h3>
+
+<ul>
+<li>The executor function, ie. <code>{ resolve, reject in ... }</code> is executed right away by the initializer during the process of initializing the promise object.</li>
+<li>the first <code>resolve</code>, <code>reject</code> or <code>throw</code> that is reached <strong>wins</strong> and any further calls will be <strong>ignored</strong>.</li>
+</ul>
+<h2 id='chaining' class='heading'>Chaining</h2>
+
+<p>Use <code>map</code> and <code>flatMap</code> to chain promises.</p>
+
+<p><strong>Tip</strong>: make functions as small as possible so you can compose easily. Example:</p>
+<pre class="highlight swift"><code><span class="kt">PromiseLite</span><span class="o">.</span><span class="nf">resolve</span><span class="p">(</span><span class="s">"https://your.endpoint.com/user/</span><span class="se">\(</span><span class="n">id</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nf">url</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nf">fetch</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="k">try</span> <span class="kt">JSONDecoder</span><span class="p">()</span><span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="kt">User</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">18</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nv">$0</span> <span class="p">?</span> <span class="nf">fetchContents</span><span class="p">()</span> <span class="p">:</span> <span class="kt">PromiseLite</span><span class="o">.</span><span class="nf">reject</span><span class="p">(</span><span class="kt">AppError</span><span class="o">.</span><span class="n">userIsUnderage</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="nf">display</span><span class="p">(</span><span class="nv">contents</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+</code></pre>
+
+<p>In the above example, we start with a string <code>https://your.endpoint.com/user/\(id)</code>, then we call <code>url(from:)</code> to transform the <code>string</code> into an <code>URL</code>, etc&hellip;</p>
+<h2 id='handling-errors' class='heading'>Handling errors</h2>
+
+<p>An error does propagate until it is catched with <code>catch</code> or <code>flatCatch</code>. Once catched, the chaining is restored and continues.</p>
+<pre class="highlight swift"><code><span class="kt">PromiseLite</span><span class="o">.</span><span class="nf">resolve</span><span class="p">(</span><span class="s">"not://a.va|id.url"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nf">url</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span> <span class="c1">// 💥 this promise rejects because the url is invalid</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="cm">/* not reached */</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="cm">/* not reached */</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="cm">/* not reached */</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="cm">/* not reached */</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="cm">/* not reached */</span> <span class="p">}</span>
+  <span class="o">.</span><span class="k">catch</span>   <span class="p">{</span> <span class="cm">/* REACHED! */</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="cm">/* REACHED! */</span> <span class="p">}</span>
+  <span class="o">...</span>
+</code></pre>
+<h2 id='how-to-debug-a-chaining' class='heading'>How to debug a chaining?</h2>
+
+<p>Watch promise lifecycle by setting <code><a href="Structs/PromiseLiteConfiguration.html#/s:11PromiseLite0aB13ConfigurationV8debuggerAA0aB8Debugger_pSgvpZ">PromiseLiteConfiguration.debugger</a></code> instance. This instance is called when a promise starts and when it resolves or rejects. <code><a href="Classes/PromiseLite.html">PromiseLite</a></code> provides a default implementation of the <code><a href="Protocols/PromiseLiteDebugger.html">PromiseLiteDebugger</a></code> protocol: <code>DefaultPromiseLiteDebugger(output:)</code>.</p>
+<pre class="highlight swift"><code><span class="c1">// Do the following to print default debugger output in the console.</span>
+<span class="kt">PromiseLiteConfiguration</span><span class="o">.</span><span class="n">debugger</span> <span class="o">=</span> <span class="kt">DefaultPromiseLiteDebugger</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+</code></pre>
+
+<p>In addition, a promise can be initialized with a description so it is easier to understand which promise is currently being executed. By default, the description of a promise is <code><a href="Classes/PromiseLite.html">PromiseLite&lt;TheType&gt;</a></code>.</p>
+<pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchUser</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">PromiseLite</span><span class="o">&lt;</span><span class="kt">User</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kt">PromiseLite</span><span class="o">&lt;</span><span class="kt">User</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"fetch user"</span><span class="p">)</span> <span class="p">{</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">reject</span> <span class="k">in</span>
+    <span class="o">...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">saveInDatabase</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="kt">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">PromiseLite</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kt">PromiseLite</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"save in db"</span><span class="p">)</span> <span class="p">{</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">reject</span> <span class="k">in</span>
+    <span class="o">...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nf">fetchUser</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="s">"123"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nf">saveInDatabase</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="n">_</span> <span class="k">in</span> <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">updateUI</span><span class="p">()</span> <span class="p">}</span>
+  <span class="o">.</span><span class="k">catch</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="n">err</span> <span class="k">in</span> <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="nf">updateUI</span><span class="p">(</span><span class="nv">error</span><span class="p">:</span> <span class="n">err</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="c1">// The above chaining will result in the following logs in the console:</span>
+<span class="c1">// 🔗 | fetch user resolves ✅ in 1.36 sec</span>
+<span class="c1">// 🔗 | save in db resolves ✅ in 0.72 sec</span>
+<span class="c1">// 🔗 | PromiseLite&lt;()&gt; resolves ✅ in 0.00 sec</span>
+<span class="c1">// 🔗 | PromiseLite&lt;()&gt; resolves ✅ in 0.00 sec</span>
+<span class="c1">// Note that `map` and `catch` implicitly creates a promise with the default description. Since `updateUI` is a function that returns void, the type's value of the implicity created promise is `()`.</span>
+<span class="c1">// Note that `catch` actually resolves because it implicitly creates a promise that resolves regardless of whether the previous promise resolved or rejected.</span>
+
+<span class="c1">// In case, `fetchUser(id:)` would reject, the above chaining would result in the following logs in the console:</span>
+<span class="c1">// 🔗 | fetch user rejects ❌ in 1.36 sec</span>
+<span class="c1">// 🔗 | save in db rejects ❌ in 0.00 sec</span>
+<span class="c1">// 🔗 | PromiseLite&lt;()&gt; rejects ❌ in 0.00 sec</span>
+<span class="c1">// 🔗 | PromiseLite&lt;()&gt; resolves ✅ in 0.00 sec</span>
+<span class="c1">// Note that rejection does propagate until `catch` handle the error returning a promise that resolves.</span>
+</code></pre>
+<h2 id='changelog' class='heading'>Changelog</h2>
+
+<p>Visit <a href="https://github.com/frouo/promise-lite/blob/master/CHANGELOG.md">CHANGELOG.md</a></p>
+<h2 id='authors' class='heading'>Authors</h2>
+
+<ul>
+<li>François Rouault</li>
+</ul>
+
+<p>Feel free to submit merge request.</p>
+<h2 id='license' class='heading'>License</h2>
+
+<p>PromiseLite is available under the MIT license. See the LICENSE file for more info.</p>
+
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2021 <a class="link" href="https://github.com/frouo/promise-lite" target="_blank" rel="external">François Rouault</a>. All rights reserved. (Last updated: 2021-01-06)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

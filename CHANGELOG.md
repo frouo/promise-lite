@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 ## 2.0.0
 
 - Remove deprecated methods
+- Generate docs using [Jazzy](https://github.com/realm/jazzy)
 
 ## 1.5.0
 
