@@ -1,3 +1,5 @@
+![chaining](https://cocoricostudio.com/promiselite/readme.png)
+
 # PromiseLite
 
 **Lets chain async and synch functions**

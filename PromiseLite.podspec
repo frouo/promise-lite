@@ -1,12 +1,12 @@
 Pod::Spec.new do |s|
   s.name             = 'PromiseLite'
-  s.version          = '1.5.0'
-  s.summary          = 'Lets chain asynchronous functions. Very lightweight 🌱, 100% tested 💯, pure Swift 🏎, no magic.'
+  s.version          = '2.0.0'
+  s.summary          = 'Lets chain asynchronous functions. Lightweight, 100% tested, pure Swift.'
 
   s.description      = <<-DESC
-Lets chain asynchronous functions.
+Lets chain sync and asynchronous functions.
 This is an implementation of Javascript Promise.
-It is pure Swift, 100% tested, and very lightweight, ~150 lines of code 🌱
+It is pure Swift, 100% tested, and very lightweight, ~150 lines of code.
                        DESC
 
   s.homepage         = 'https://github.com/frouo/promise-lite'
