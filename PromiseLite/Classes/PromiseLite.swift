@@ -97,15 +97,6 @@ public class PromiseLite<Value> {
             rejection: { error in PromiseLite<NewValue>.reject(error) })
   }
 
-  /// Use `flatMap(_:)` and `flatCatch(_:)` instead.
-  /// - Parameter completion: A completion block that is called if the promise fulfilled.
-  /// - Parameter rejection: A completion block that is called if the promise rejected.
-  @available(*, deprecated, message: "Use `flatCatch` instead to deal with rejected cases")
-  @discardableResult
-  public func flatMap<NewValue>(_ completion: @escaping (Value) throws -> PromiseLite<NewValue>, rejection: @escaping (Error) throws -> PromiseLite<NewValue>) -> PromiseLite<NewValue> {
-    flatMap(completion: completion, rejection: rejection)
-  }
-
   /// Returns a promise.
   /// - Parameter completion: A completion block that is called if the promise fulfilled.
   /// - Parameter rejection: A completion block that is called if the promise rejected.

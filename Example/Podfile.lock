@@ -1,6 +1,6 @@
 PODS:
-  - PromiseLite (1.5.0)
-  - PromiseLite/Tests (1.5.0)
+  - PromiseLite (2.0.0)
+  - PromiseLite/Tests (2.0.0)
 
 DEPENDENCIES:
   - PromiseLite (from `../`)
@@ -11,7 +11,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  PromiseLite: 1e20fc24afa6b889c00276e37e10dc74b6e5b007
+  PromiseLite: a062d9190bb2e155b14cfe4b7baa0c281f99b548
 
 PODFILE CHECKSUM: 181e23f19cb714b24b3a521c2f8b736886e7dd70
 

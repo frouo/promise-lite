@@ -1,0 +1,12 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/frouo/Programming/iOS/promise-lite/PromiseLite/Classes/PromiseLiteDebugger.swift",
+      "line": 55,
+      "symbol": "DefaultPromiseLiteDebugger.init(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/frouo/Programming/iOS/promise-lite"
+}
