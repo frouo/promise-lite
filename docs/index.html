@@ -16,7 +16,7 @@
     <a title="PromiseLite  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">PromiseLite 1.5.0 Docs</a> (96% documented)</p>
+        <p><a href="index.html">PromiseLite 2.0.0 Docs</a> (96% documented)</p>
         <p class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
@@ -239,12 +239,12 @@
 <p>Use <code>map</code> and <code>flatMap</code> to chain promises.</p>
 
 <p><strong>Tip</strong>: make functions as small as possible so you can compose easily. Example:</p>
-<pre class="highlight swift"><code><span class="kt">PromiseLite</span><span class="o">.</span><span class="nf">resolve</span><span class="p">(</span><span class="s">"https://your.endpoint.com/user/</span><span class="se">\(</span><span class="n">id</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+<pre class="highlight swift"><code><span class="kt">Promise</span><span class="o">.</span><span class="nf">resolve</span><span class="p">(</span><span class="s">"https://your.endpoint.com/user/</span><span class="se">\(</span><span class="n">id</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
   <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nf">url</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
   <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nf">fetch</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
   <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="k">try</span> <span class="kt">JSONDecoder</span><span class="p">()</span><span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="kt">User</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
   <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">18</span> <span class="p">}</span>
-  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nv">$0</span> <span class="p">?</span> <span class="nf">fetchContents</span><span class="p">()</span> <span class="p">:</span> <span class="kt">PromiseLite</span><span class="o">.</span><span class="nf">reject</span><span class="p">(</span><span class="kt">AppError</span><span class="o">.</span><span class="n">userIsUnderage</span><span class="p">)</span> <span class="p">}</span>
+  <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nv">$0</span> <span class="p">?</span> <span class="nf">fetchContents</span><span class="p">()</span> <span class="p">:</span> <span class="kt">Promise</span><span class="o">.</span><span class="nf">reject</span><span class="p">(</span><span class="kt">AppError</span><span class="o">.</span><span class="n">userIsUnderage</span><span class="p">)</span> <span class="p">}</span>
   <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="nf">display</span><span class="p">(</span><span class="nv">contents</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
 </code></pre>
 
@@ -252,7 +252,7 @@
 <h2 id='handling-errors' class='heading'>Handling errors</h2>
 
 <p>An error does propagate until it is catched with <code>catch</code> or <code>flatCatch</code>. Once catched, the chaining is restored and continues.</p>
-<pre class="highlight swift"><code><span class="kt">PromiseLite</span><span class="o">.</span><span class="nf">resolve</span><span class="p">(</span><span class="s">"not://a.va|id.url"</span><span class="p">)</span>
+<pre class="highlight swift"><code><span class="kt">Promise</span><span class="o">.</span><span class="nf">resolve</span><span class="p">(</span><span class="s">"not://a.va|id.url"</span><span class="p">)</span>
   <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="nf">url</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span> <span class="p">}</span> <span class="c1">// 💥 this promise rejects because the url is invalid</span>
   <span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span> <span class="cm">/* not reached */</span> <span class="p">}</span>
   <span class="o">.</span><span class="n">map</span>     <span class="p">{</span> <span class="cm">/* not reached */</span> <span class="p">}</span>
