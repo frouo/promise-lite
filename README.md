@@ -14,6 +14,8 @@ PromiseLite is an implementation of [Javascript Promises](https://developer.mozi
 
 It is pure Swift, 100% tested, and very lightweight, ~150 lines of code.
 
+📜 [Complete Documentation](https://frouo.github.io/promise-lite/)
+
 ## Installation
 
 PromiseLite is available through [CocoaPods](https://cocoapods.org). Add the following line to your Podfile:
